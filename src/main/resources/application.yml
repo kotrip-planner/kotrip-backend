@@ -19,3 +19,15 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
+
+  datasource:
+    url: jdbc:mysql://database-1.cn4s886aafld.us-east-1.rds.amazonaws.com:3306
+    username: master
+    password: sangyunpark99
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
