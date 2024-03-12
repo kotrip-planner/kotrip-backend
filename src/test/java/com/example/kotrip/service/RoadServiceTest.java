@@ -9,8 +9,13 @@ public class RoadServiceTest {
     public static void main(String[] args) {
         RoadService roadService = new RoadService();
 
-        List<Node> list = List.of(
+        String start = "126.844856,37.5407361";
 
-        );
+        // 목적지
+        String goal = "126.8980711,37.5763214";
+
+        long duration = RoadService.getDuration(start, goal);
+
+        System.out.println(duration);
     }
 }

@@ -22,7 +22,7 @@ public class RoadService {
     private static final String CLIENT_SECRET = "aWz84CcrXTVDMSZULVD9HH4Z3J2sWdge5zBYaMQw";
 
     //"126.844856,37.5407361" 이런 형식으로 입력해야함
-    private Long getDuration(String start, String goal) { // 두 지점의 최소 시간 구하는 로여
+    public static Long getDuration(String start, String goal) { // 두 지점의 최소 시간 구하는 로여
         HttpClient httpClient = HttpClient.create().secure(t -> {
             try {
                 t.sslContext(SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build());
@@ -50,7 +50,6 @@ public class RoadService {
         JsonParser jsonParser = new JsonParser();
         JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
         long duration = jsonObject.getAsJsonObject("route").getAsJsonArray("trafast").get(0).getAsJsonObject().getAsJsonObject("summary").get("duration").getAsLong();
-
         return duration;
     }
 
@@ -70,10 +69,11 @@ public class RoadService {
         // 3
         // 4
 
+        long beforeTime = System.currentTimeMillis();
         for (int i = 0; i < nodes.size(); i++) {
             Node startNode = nodes.get(i);
-            long startLatitude = startNode.getLatitude();
-            long startLongitude = startNode.getLongitude();
+            double startLatitude = startNode.getLatitude();
+            double startLongitude = startNode.getLongitude();
 
             String startCoordinates = startLatitude +","+ startLongitude;
 
@@ -82,8 +82,8 @@ public class RoadService {
                     continue;
                 }
                 Node goalNode = nodes.get(j);
-                long goalLatitude = goalNode.getLatitude();
-                long goalLongitude = goalNode.getLongitude();
+                double goalLatitude = goalNode.getLatitude();
+                double goalLongitude = goalNode.getLongitude();
                 String goalCoordinates = goalLatitude +","+ goalLongitude;
                 long duration = getDuration(startCoordinates, goalCoordinates);
 
@@ -91,6 +91,9 @@ public class RoadService {
                 w[startNode.getCurIdx()][goalNode.getCurIdx()] = duration;
             }
         }
+        long afterTime = System.currentTimeMillis();
+
+        System.out.println(afterTime - beforeTime);
 
         System.out.println(Arrays.deepToString(w));
     }

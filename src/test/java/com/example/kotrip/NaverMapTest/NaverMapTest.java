@@ -14,13 +14,15 @@ public class NaverMapTest {
         String uriPath = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving";
 
         // 시작지
-        String start = "126.844856,37.5407361";
+        String start = "126.97691713713438,37.577536707517076";
 
         // 목적지
-        String goal = "126.8980711,37.5763214";
+        String goal = "126.8980711,36.5763215";
 
         // 실시간 빠른길
         String option = "trafast";
+
+        long beforeTime = System.currentTimeMillis();
 
         HttpClient httpClient = HttpClient.create().secure(t -> {
             try {
@@ -53,5 +55,9 @@ public class NaverMapTest {
         JsonObject jsonObject = (JsonObject) jsonParser.parse(response);
         long duration = jsonObject.getAsJsonObject("route").getAsJsonArray("trafast").get(0).getAsJsonObject().getAsJsonObject("summary").get("duration").getAsLong();
         System.out.println("duration : " + duration);
+
+        long afterTime = System.currentTimeMillis();
+
+        System.out.println(afterTime - beforeTime);
     }
 }

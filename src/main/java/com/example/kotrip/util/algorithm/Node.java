@@ -6,10 +6,10 @@ import lombok.Getter;
 public class Node {
 
     int curIdx;
-    Long latitude;
-    Long longitude;
+    double latitude;
+    double longitude;
 
-    public Node(int curIdx, Long latitude, Long longitude) {
+    public Node(int curIdx, double latitude, double longitude) {
         this.curIdx = curIdx;
         this.latitude = latitude;
         this.longitude = longitude;
