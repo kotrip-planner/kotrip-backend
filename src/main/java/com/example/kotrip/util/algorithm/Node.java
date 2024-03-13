@@ -4,7 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class Node {
-
     int curIdx;
     double latitude;
     double longitude;
