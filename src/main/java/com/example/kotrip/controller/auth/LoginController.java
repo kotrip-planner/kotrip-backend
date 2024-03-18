@@ -22,7 +22,6 @@ public class LoginController {
 
     @PostMapping("/login")
     public ApiResponse<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto){
-        loginService.login(loginRequestDto.getCode());
-        return ApiResponse.ok(LoginResponseDto.of("로그인 완료"));
+        return ApiResponse.ok(loginService.login(loginRequestDto.getCode()));
     }
 }

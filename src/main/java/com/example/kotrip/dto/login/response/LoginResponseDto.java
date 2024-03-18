@@ -7,10 +7,12 @@ import lombok.Getter;
 @Builder
 public class LoginResponseDto {
     String message;
+    String accessToken;
 
-    public static LoginResponseDto of(final String message){
+    public static LoginResponseDto of(final String message, final String accessToken){
         return LoginResponseDto.builder()
                 .message(message)
+                .accessToken(accessToken)
                 .build();
     }
 }
