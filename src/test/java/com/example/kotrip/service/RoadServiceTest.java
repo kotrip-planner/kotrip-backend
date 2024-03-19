@@ -14,8 +14,8 @@ public class RoadServiceTest {
         // 목적지
         String goal = "126.8980711,37.5763214";
 
-        long duration = RoadService.getDuration(start, goal);
+        //long duration = RoadService.getDuration(start, goal);
 
-        System.out.println(duration);
+        //System.out.println(duration);
     }
 }
