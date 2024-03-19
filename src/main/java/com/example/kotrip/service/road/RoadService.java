@@ -30,7 +30,10 @@ public class RoadService {
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.create()))
                 .build();
 
-        client.get()
+        client.mutate()
+                .baseUrl(uriPath)
+                .build()
+                .get()
                 .uri(uriBuilder -> uriBuilder.path("")
                         .queryParam("start", start)
                         .queryParam("goal", goal)
