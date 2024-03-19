@@ -53,7 +53,6 @@ public class RoadService {
     }
 
     public void calculate(List<Node> nodes) {
-
         int N = nodes.size();
         CountDownLatch latch = new CountDownLatch(N * (N - 1));
 
@@ -69,7 +68,7 @@ public class RoadService {
         }
 
         try {
-            latch.await(); // 전부 요청이 완료될 때 까지 기다린다.
+            latch.await(); // 전부 요청이 완료될 때 까지 기다린다,
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             e.printStackTrace();
