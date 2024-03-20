@@ -42,7 +42,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(
-                "/api/login"
+                "/api/login",
+                "/api/reissue"
         );
     }
 }

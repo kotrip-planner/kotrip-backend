@@ -1,6 +1,8 @@
 package com.example.kotrip.service.login;
 
 import com.example.kotrip.dto.login.response.LoginResponseDto;
+import com.example.kotrip.dto.reissue.request.ReissueRequestDto;
+import com.example.kotrip.dto.reissue.response.ReissueResponseDto;
 import com.example.kotrip.entity.user.User;
 import com.example.kotrip.jwt.JwtTokenProvider;
 import com.example.kotrip.repository.user.UserRepository;
@@ -32,6 +34,20 @@ public class LoginService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
+    public ReissueResponseDto reissue(ReissueRequestDto reissueRequestDto) {
+
+        String refreshToken = reissueRequestDto.getRefreshToken();
+        jwtTokenProvider.validateToken(refreshToken);
+
+        String nickname = jwtTokenProvider.getUsername(refreshToken);
+        String kakaoId = jwtTokenProvider.getKakaoId(refreshToken);
+
+        String accessToken = jwtTokenProvider.createAccessToken(nickname,kakaoId);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(nickname,kakaoId);
+
+        return ReissueResponseDto.of(accessToken, newRefreshToken);
+    }
 
     public LoginResponseDto login(String code) {
 

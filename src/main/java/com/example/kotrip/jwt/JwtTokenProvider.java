@@ -57,9 +57,14 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getUsername(String accessToken) {
+    public String getUsername(String token) {
         key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
-        return Jwts.parser().verifyWith(key).build().parseSignedClaims(accessToken).getPayload().get(NICKNAME,String.class);
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().get(NICKNAME,String.class);
+    }
+
+    public String getKakaoId(String token) {
+        key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
+        return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().get(KAKAOID,String.class);
     }
 
     public String resolveAccessToken(HttpServletRequest request){

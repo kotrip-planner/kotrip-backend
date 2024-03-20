@@ -3,6 +3,8 @@ package com.example.kotrip.controller.auth;
 import com.example.kotrip.dto.common.ApiResponse;
 import com.example.kotrip.dto.login.request.LoginRequestDto;
 import com.example.kotrip.dto.login.response.LoginResponseDto;
+import com.example.kotrip.dto.reissue.request.ReissueRequestDto;
+import com.example.kotrip.dto.reissue.response.ReissueResponseDto;
 import com.example.kotrip.service.login.LoginService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -23,5 +25,10 @@ public class LoginController {
     @PostMapping("/login")
     public ApiResponse<LoginResponseDto> login(@Valid @RequestBody LoginRequestDto loginRequestDto){
         return ApiResponse.ok(loginService.login(loginRequestDto.getCode()));
+    }
+
+    @PostMapping("/reissue")
+    public ApiResponse<ReissueResponseDto> reissue(@Valid @RequestBody ReissueRequestDto reissueRequestDto) {
+        return ApiResponse.ok(loginService.reissue(reissueRequestDto));
     }
 }
