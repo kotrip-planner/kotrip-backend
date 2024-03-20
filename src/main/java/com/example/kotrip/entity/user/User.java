@@ -36,6 +36,7 @@ public class User implements UserDetails {
     public static User create(String kakaoUserId, String nickname) {
         return User.builder()
                 .kakaoUserId(kakaoUserId)
+                .authority(Authority.USER)
                 .nickname(nickname)
                 .build();
     }

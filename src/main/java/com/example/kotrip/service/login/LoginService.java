@@ -62,7 +62,8 @@ public class LoginService {
         // 유저 정보가 존재하는가?
         Optional<User> user = userRepository.findUserByKakaoUserId(kakaoId);
 
-        if(user == null) { // 유저가 존재하지 않는 경우 회원가입
+        if(user.isEmpty()) { // 유저가 존재하지 않는 경우 회원가입
+            log.info("계정이 존재하지 않으므로 회원가입을 진행합니다.");
             userRepository.save(User.create(kakaoId,nickname));
         }
 
