@@ -6,13 +6,15 @@ import lombok.Getter;
 @Getter
 @Builder
 public class LoginResponseDto {
-    String message;
-    String accessToken;
+    private String message;
+    private String accessToken;
+    private String refreshToken;
 
-    public static LoginResponseDto of(final String message, final String accessToken){
+    public static LoginResponseDto of(final String message, final String accessToken, final String refreshToken){
         return LoginResponseDto.builder()
                 .message(message)
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 }

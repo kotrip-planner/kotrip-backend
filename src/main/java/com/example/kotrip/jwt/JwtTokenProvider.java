@@ -7,7 +7,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import javax.crypto.SecretKey;
@@ -20,12 +19,13 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private static final String secretKey = "8af7RixU2UNn1BUVIg2AvJEQaf0D29XY";
+    private static final String secretKey = "8af7RixU2UNn1BUVIg2AvJEQaf0D29XYA23Cmdkf9bcelSdIE";
     private static final String NICKNAME = "nickname";
     private static final String KAKAOID = "kakaoId";
     private static final String AUTHORIZATION = "Authorization";
 
-    private static long ACCESS_TOKEN_EXPIRED_TIME = 180000; // 3분
+    private static long ACCESS_TOKEN_EXPIRED_TIME = 86400000L; // 1일
+    private static long REFRESH_TOKEN_EXPIRED_TIME = 2592000000L; // 30일
 
     private SecretKey key;
 
@@ -39,6 +39,20 @@ public class JwtTokenProvider {
                 .claims(claims)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis()+ ACCESS_TOKEN_EXPIRED_TIME))
+                .signWith(key)
+                .compact();
+    }
+
+    public String createRefreshToken(String nickname, String kakaoId) {
+        Claims claims = Jwts.claims()
+                .add(NICKNAME, nickname)
+                .add(KAKAOID, kakaoId)
+                .build();
+
+        return Jwts.builder()
+                .claims(claims)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis()+ REFRESH_TOKEN_EXPIRED_TIME))
                 .signWith(key)
                 .compact();
     }

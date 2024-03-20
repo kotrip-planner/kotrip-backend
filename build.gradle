@@ -31,8 +31,11 @@ dependencies {
     implementation 'io.projectreactor.netty:reactor-netty-http:1.1.16'
     implementation "org.springframework:spring-webflux:6.0.11"
     implementation 'com.google.code.gson:gson:2.8.2'
-
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.5'
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.12.5'
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-gson', version: '0.12.5'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'

@@ -9,5 +9,4 @@ public class KotripApplication {
     public static void main(String[] args) {
         SpringApplication.run(KotripApplication.class, args);
     }
-
 }

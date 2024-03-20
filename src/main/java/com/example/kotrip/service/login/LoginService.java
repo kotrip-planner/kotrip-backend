@@ -15,13 +15,14 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import lombok.NoArgsConstructor;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class LoginService {
 
     private static final String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
@@ -29,8 +30,8 @@ public class LoginService {
     private static final String REST_API_KEY = "fa498bcb6460766a009c3d798e9ac960";
     private static final String CLIENT_SECRET = "lEB0s7oBeim5d2Y4UnEBH2Owa9n32VZs";
 
-    private UserRepository userRepository;
-    private JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public LoginResponseDto login(String code) {
 
@@ -43,7 +44,7 @@ public class LoginService {
         String kakaoId = String.valueOf(userInfo.get("id"));
 
         // 유저 정보가 존재하는가?
-        User user = userRepository.findUserByKakaoUserId(kakaoId).get();
+        Optional<User> user = userRepository.findUserByKakaoUserId(kakaoId);
 
         if(user == null) { // 유저가 존재하지 않는 경우 회원가입
             userRepository.save(User.create(kakaoId,nickname));
@@ -51,10 +52,10 @@ public class LoginService {
 
         // 토큰 생성 (닉네임, 카카오 아이디 기반)
         String accessToken = jwtTokenProvider.createAccessToken(nickname,kakaoId);
-
+        String refreshToken = jwtTokenProvider.createRefreshToken(nickname,kakaoId);
 
         // 토큰 발행
-        return LoginResponseDto.of("로그인 성공", accessToken);
+        return LoginResponseDto.of("로그인 성공", accessToken,refreshToken);
     }
 
     private HashMap<String, Object> getUserInfo(String accessToken) { // 토큰 기반으로 유저 정보 추출하기
