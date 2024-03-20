@@ -8,9 +8,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableAsync
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
 public class KotripApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(KotripApplication.class, args);
     }
-
 }
