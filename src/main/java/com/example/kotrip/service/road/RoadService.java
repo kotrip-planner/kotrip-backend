@@ -55,7 +55,7 @@ public class RoadService {
                 });
     }
 
-    public void calculate(List<Node> nodes) {
+    public long[][] calculate(List<Node> nodes) {
         int N = nodes.size();
         CountDownLatch latch = new CountDownLatch(N * (N - 1));
 
@@ -85,7 +85,9 @@ public class RoadService {
             distances[startIdx][goalIdx] = value;
         });
 
-        System.out.println(Arrays.deepToString(distances));
+//        System.out.println(Arrays.deepToString(distances));
+
+        return distances;
     }
 }
 
