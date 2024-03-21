@@ -43,7 +43,8 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(
                 "/api/login",
-                "/api/reissue"
+                "/api/reissue",
+                "/city"
         );
     }
 }
