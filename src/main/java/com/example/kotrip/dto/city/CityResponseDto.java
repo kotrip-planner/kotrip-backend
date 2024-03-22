@@ -1,6 +1,6 @@
 package com.example.kotrip.dto.city;
 
-import com.example.kotrip.entity.City;
+import com.example.kotrip.entity.tourlist.City;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,7 @@ public class CityResponseDto {
     public long mapY;
 
     public CityResponseDto(City city) {
-        areaId = city.areaId;
+        areaId = city.cityId;
         title = city.title;
         imageUrl = city.imageUrl;
         mapX = city.mapX;

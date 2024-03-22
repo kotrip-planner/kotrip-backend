@@ -6,10 +6,11 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+        show_sql: true
 
 logging:
   level:
