@@ -32,10 +32,10 @@ public class HotelInfo {
 
     public String imageUrl2;
 
-    public int contentTypeId;
-
+    @Column(name = "map_x", precision = 13, scale = 10)
     public BigDecimal mapX;
 
+    @Column(name = "map_y", precision = 13, scale = 10)
     public BigDecimal mapY;
 
     public String tel;
