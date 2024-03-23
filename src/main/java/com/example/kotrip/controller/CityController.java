@@ -1,7 +1,7 @@
 package com.example.kotrip.controller;
 
 import com.example.kotrip.dto.city.CityResponseDto;
-import com.example.kotrip.entity.City;
+import com.example.kotrip.entity.tourlist.City;
 import com.example.kotrip.repository.city.CityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

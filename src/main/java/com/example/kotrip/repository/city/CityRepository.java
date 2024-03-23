@@ -1,6 +1,6 @@
 package com.example.kotrip.repository.city;
 
-import com.example.kotrip.entity.City;
+import com.example.kotrip.entity.tourlist.City;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

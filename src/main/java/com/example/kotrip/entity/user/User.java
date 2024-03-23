@@ -1,12 +1,10 @@
 package com.example.kotrip.entity.user;
 
 import com.example.kotrip.constants.Authority;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.kotrip.entity.tourlist.TourList;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -32,6 +30,11 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<TourList> tourList;
+
 
     public static User create(String kakaoUserId, String nickname) {
         return User.builder()
