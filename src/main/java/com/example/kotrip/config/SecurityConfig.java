@@ -44,6 +44,7 @@ public class SecurityConfig {
         return (web) -> web.ignoring().requestMatchers(
                 "/api/login",
                 "/api/reissue",
+                "/api/schedule",
                 "/city",
                 "/tour"
         );

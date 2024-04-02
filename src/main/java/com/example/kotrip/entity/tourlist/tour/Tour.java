@@ -30,5 +30,4 @@ public class Tour {
 
     public String date;
 
-
 }

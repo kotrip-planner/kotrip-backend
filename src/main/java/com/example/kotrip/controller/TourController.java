@@ -3,7 +3,6 @@ package com.example.kotrip.controller;
 import com.example.kotrip.dto.common.ApiResponse;
 import com.example.kotrip.dto.tour.TourInfoDto;
 import com.example.kotrip.repository.tour.TourRepository;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
