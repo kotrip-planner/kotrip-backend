@@ -46,7 +46,7 @@ public class SecurityConfig {
                 "/api/reissue",
                 "/city",
                 "/tour",
-                "/hotel"
+                "/hotelSearch"
         );
     }
 }
