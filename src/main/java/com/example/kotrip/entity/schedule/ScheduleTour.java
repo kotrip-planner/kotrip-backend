@@ -6,8 +6,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ScheduleTour {
 
     @Id @GeneratedValue
@@ -20,11 +27,22 @@ public class ScheduleTour {
 
     private String imageUrl;
 
-    private Double mapX;
+    private BigDecimal mapX;
 
-    private Double mapY;
+    private BigDecimal mapY;
 
     @ManyToOne
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
+
+    public static ScheduleTour toEntity(Long id, String title, Long duration, String imageUrl, BigDecimal mapX, BigDecimal mapY){
+        return ScheduleTour.builder()
+                .id(id)
+                .title(title)
+                .duration(duration)
+                .imageUrl(imageUrl)
+                .mapX(mapX)
+                .mapY(mapY)
+                .build();
+    }
 }

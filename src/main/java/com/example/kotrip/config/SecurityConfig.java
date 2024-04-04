@@ -4,7 +4,6 @@ import com.example.kotrip.handler.CustomAccessDeniedHandler;
 import com.example.kotrip.handler.JwtAuthenticationEntryPoint;
 import com.example.kotrip.jwt.JwtTokenFilter;
 import com.example.kotrip.jwt.JwtTokenProvider;
-import com.example.kotrip.service.useDetails.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -22,8 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
-    private final CustomUserDetailsService customUserDetailsService;
-
+    private final UserDetailsService userDetailsService;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -31,7 +30,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .anyRequest().permitAll())
-                .addFilterBefore(new JwtTokenFilter(jwtTokenProvider, customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtTokenFilter(jwtTokenProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                         .accessDeniedHandler(new CustomAccessDeniedHandler())
@@ -44,7 +43,7 @@ public class SecurityConfig {
         return (web) -> web.ignoring().requestMatchers(
                 "/api/login",
                 "/api/reissue",
-                "/api/schedule",
+                "/api/kakao",
                 "/api/naver/driving",
                 "/city",
                 "/tour"

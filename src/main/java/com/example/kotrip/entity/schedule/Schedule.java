@@ -11,8 +11,14 @@ import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Schedule {
 
     @Id @GeneratedValue
@@ -29,4 +35,7 @@ public class Schedule {
 
     @OneToMany(mappedBy = "schedule")
     List<ScheduleTour> tours = new ArrayList<>();
+
+
+
 }

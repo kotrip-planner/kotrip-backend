@@ -22,9 +22,8 @@ public class ScheduleController {
 
    @PostMapping("")
    public ApiResponse<ScheduleResponseDto> addSchedule(
-           @AuthenticationPrincipal Authentication authentication,
            @RequestBody @Valid NaverRequestDto naverRequestDto
            ){
-       return ApiResponse.ok(scheduleService.setSchedule(authentication,naverRequestDto));
+       return ApiResponse.ok(scheduleService.setSchedule(naverRequestDto));
    }
 }
