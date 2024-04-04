@@ -3,8 +3,13 @@ package com.example.kotrip.entity.user;
 import com.example.kotrip.constants.Authority;
 import com.example.kotrip.entity.tourlist.TourList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;

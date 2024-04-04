@@ -3,7 +3,6 @@ package com.example.kotrip.service.road;
 import com.example.kotrip.util.algorithm.Node;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;

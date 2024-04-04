@@ -2,12 +2,14 @@ package com.example.kotrip.entity.tourlist;
 
 import com.example.kotrip.entity.tourlist.hotel.HotelInfo;
 import com.example.kotrip.entity.tourlist.tour.TourInfo;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -25,11 +27,11 @@ public class City {
 
     @NotEmpty
     @Column(name = "mapx")
-    public long mapX;
+    public double mapX;
 
     @NotEmpty
     @Column(name = "mapy")
-    public long mapY;
+    public double mapY;
 
     @OneToMany(mappedBy = "city")
     public List<TourInfo> tours;
