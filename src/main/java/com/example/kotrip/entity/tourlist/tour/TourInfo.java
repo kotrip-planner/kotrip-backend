@@ -19,6 +19,7 @@ public class TourInfo {
     @Id
     @Column(name = "info_id")
     public int id;
+
     @ManyToOne
     @JoinColumn(name = "city_id")
     public City city;
