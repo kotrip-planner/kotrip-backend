@@ -7,9 +7,6 @@ import lombok.Getter;
 @Getter
 public class ScheduleRequestDto {
 
-    @NotNull(message = "areaId는 필수로 입력 해야 합니다.")
-    private int areaId;
-
-    @NotNull(message = "일정을 필수로 입력 해야 합니다.")
-    private List<Day> days;
+    @NotNull(message = "스케줄을 입력해야합니다.")
+    private List<ScheduleDetailRequestDto> kotrip;
 }

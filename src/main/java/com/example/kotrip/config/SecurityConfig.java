@@ -45,6 +45,7 @@ public class SecurityConfig {
                 "/api/login",
                 "/api/reissue",
                 "/api/schedule",
+                "/api/naver/driving",
                 "/city",
                 "/tour"
         );

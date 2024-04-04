@@ -1,8 +1,8 @@
 package com.example.kotrip.controller.schedule;
 
 import com.example.kotrip.dto.common.ApiResponse;
-import com.example.kotrip.dto.schedule.request.ScheduleRequestDto;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
+import com.example.kotrip.naver.NaverRequestDto;
 import com.example.kotrip.service.schedule.ScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ public class ScheduleController {
    @PostMapping("")
    public ApiResponse<ScheduleResponseDto> addSchedule(
            @AuthenticationPrincipal Authentication authentication,
-           @RequestBody @Valid ScheduleRequestDto scheduleRequestDto
-   ){
-       return ApiResponse.ok(scheduleService.getSchedule(authentication,scheduleRequestDto));
+           @RequestBody @Valid NaverRequestDto naverRequestDto
+           ){
+       return ApiResponse.ok(scheduleService.setSchedule(authentication,naverRequestDto));
    }
 }

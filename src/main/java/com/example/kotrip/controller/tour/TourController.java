@@ -1,4 +1,4 @@
-package com.example.kotrip.controller;
+package com.example.kotrip.controller.tour;
 
 import com.example.kotrip.dto.common.ApiResponse;
 import com.example.kotrip.dto.tour.TourInfoDto;
