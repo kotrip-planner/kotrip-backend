@@ -37,5 +37,12 @@ public class Schedule {
     List<ScheduleTour> tours = new ArrayList<>();
 
 
-
+    public static Schedule toEntity(Long areaId, LocalDate time, User user,List<ScheduleTour> tours) {
+        return Schedule.builder()
+                .areaId(areaId)
+                .time(time)
+                .user(user)
+                .tours(tours)
+                .build();
+    }
 }

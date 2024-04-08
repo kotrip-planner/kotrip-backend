@@ -1,6 +1,7 @@
 package com.example.kotrip.service.schedule;
 
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
+import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
 import com.example.kotrip.entity.tourlist.tour.TourInfo;
 import com.example.kotrip.entity.user.User;
@@ -63,7 +64,6 @@ public class ScheduleService {
                             String imageUrl = getImageUrl(tourInfo);
                             tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L,imageUrl, tourInfo.getMapY(), tourInfo.getMapX()));
                         }
-
                         // schedule
                     }
                 },
