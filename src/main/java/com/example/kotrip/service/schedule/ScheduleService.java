@@ -1,6 +1,9 @@
 package com.example.kotrip.service.schedule;
 
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
+import com.example.kotrip.dto.schedule.response.ScheduleTourResponseDto;
+import com.example.kotrip.dto.schedule.response.SchedulesResponseDto;
+import com.example.kotrip.dto.schedule.response.SchedulesTourResponseDto;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
 import com.example.kotrip.entity.tourlist.tour.TourInfo;
@@ -12,11 +15,11 @@ import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
 import com.example.kotrip.repository.tour.TourRepository;
 import com.example.kotrip.repository.user.UserRepository;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -42,7 +45,7 @@ public class ScheduleService {
     // 일차별 스케줄을 생성하는 api
     public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto){
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = getAuthentication();
 
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
 
@@ -93,6 +96,32 @@ public class ScheduleService {
 
         // 최적 경로 만든 후 저장
         return new ScheduleResponseDto(SET_SCHEDULE_RESULT);
+    }
+
+    public SchedulesResponseDto getSchedule() { // 스케줄 가져오는 함수
+        Authentication authentication = getAuthentication();
+
+        User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("Not found User"));
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUser(user).orElseThrow(() -> new UsernameNotFoundException("Not found schedule"));
+
+        List<SchedulesTourResponseDto> schedulesTourResponseDtos = new ArrayList<>();
+
+        for(Schedule schedule: schedules) {
+            List<ScheduleTourResponseDto> tours = scheduleTourRepository.findScheduleToursBySchedule(schedule).orElseThrow(() -> new UsernameNotFoundException("Not found Schedule"))
+                    .stream().map(tour -> ScheduleTourResponseDto.builder().id(tour.getId()).title(tour.getTitle()).imageUrl(tour.getImageUrl()).mapX(tour.getMapX()).mapY(tour.getMapY()).build()).collect(
+                            Collectors.toList());
+            schedulesTourResponseDtos.add(SchedulesTourResponseDto.builder().tours(tours).date(schedule.getTime()).build());
+        }
+
+        log.info("schedulesTourResponseDtos : {}", schedulesTourResponseDtos);
+
+        return SchedulesResponseDto.builder()
+                .schedule(schedulesTourResponseDtos)
+                .build();
+    }
+
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 
     private String getImageUrl(TourInfo tourInfo) {
