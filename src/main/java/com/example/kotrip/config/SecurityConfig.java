@@ -4,7 +4,7 @@ import com.example.kotrip.handler.CustomAccessDeniedHandler;
 import com.example.kotrip.handler.JwtAuthenticationEntryPoint;
 import com.example.kotrip.jwt.JwtTokenFilter;
 import com.example.kotrip.jwt.JwtTokenProvider;
-import com.example.kotrip.service.useDetails.CustomUserDetailsService;
+import com.example.kotrip.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,6 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -44,6 +43,8 @@ public class SecurityConfig {
         return (web) -> web.ignoring().requestMatchers(
                 "/api/login",
                 "/api/reissue",
+                "/api/kakao",
+                "/api/naver/driving",
                 "/city",
                 "/tour"
         );

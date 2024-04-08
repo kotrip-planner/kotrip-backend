@@ -1,14 +1,13 @@
-package com.example.kotrip.service.useDetails;
+package com.example.kotrip.service;
 
-import com.example.kotrip.entity.user.User;
 import com.example.kotrip.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -16,7 +15,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findUserByNickname(username).orElseThrow(() -> new RuntimeException());
-        return user;
+
+        UserDetails userDetails = userRepository.findUserByNickname(username).orElseThrow(() -> new UsernameNotFoundException("Not found user"));
+
+        return userDetails;
     }
 }
