@@ -8,8 +8,11 @@ import com.example.kotrip.entity.user.User;
 import com.example.kotrip.naver.NaverRequestDto;
 import com.example.kotrip.naver.OptimalDurationService;
 import com.example.kotrip.repository.schedule.ScheduleRepository;
+import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
 import com.example.kotrip.repository.tour.TourRepository;
 import com.example.kotrip.repository.user.UserRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +36,7 @@ public class ScheduleService {
 
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ScheduleTourRepository scheduleTourRepository;
     private final TourRepository tourRepository;
 
     // 일차별 스케줄을 생성하는 api
@@ -54,7 +58,7 @@ public class ScheduleService {
         optimalResult.subscribe(
                 data -> {
                     List<List<Integer>> result = data.get("optimalRoute");
-
+                    LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
                     // DB에 저장 - User에 맞게
                     for (int i = 0; i < result.size(); i++) {
                         List<ScheduleTour> tours = new ArrayList<>();
@@ -62,9 +66,21 @@ public class ScheduleService {
                             int tourId = result.get(i).get(j);
                             TourInfo tourInfo = tourRepository.findTourInfoById(tourId).orElseThrow(() -> new IllegalArgumentException("여행 정보 가져오기"));
                             String imageUrl = getImageUrl(tourInfo);
-                            tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L,imageUrl, tourInfo.getMapY(), tourInfo.getMapX()));
+                            tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L,imageUrl, tourInfo.getMapY(), tourInfo.getMapX(),null));
                         }
-                        // schedule
+                        // schedule과 id를 묶어주어야 함
+                        if(i >= 1) {
+                            localDate = localDate.plusDays(1);
+                        }
+
+                        Schedule schedule = Schedule.toEntity(localDate, user, tours);
+                        scheduleRepository.save(schedule);
+
+                        for (int j = 0; j < schedule.getTours().size(); j++) {
+                            ScheduleTour scheduleTour = tours.get(j).setSchedule(schedule);
+                            scheduleTourRepository.save(scheduleTour);
+                        }
+
                     }
                 },
                 error -> {

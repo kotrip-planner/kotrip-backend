@@ -13,19 +13,19 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
 @NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class Schedule {
 
     @Id @GeneratedValue
     @Column(name = "schedule_id")
     private Long id;
-
-    private Long areaId;
 
     private LocalDate time;
 
@@ -37,9 +37,8 @@ public class Schedule {
     List<ScheduleTour> tours = new ArrayList<>();
 
 
-    public static Schedule toEntity(Long areaId, LocalDate time, User user,List<ScheduleTour> tours) {
+    public static Schedule toEntity(LocalDate time, User user,List<ScheduleTour> tours) {
         return Schedule.builder()
-                .areaId(areaId)
                 .time(time)
                 .user(user)
                 .tours(tours)

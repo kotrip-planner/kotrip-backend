@@ -35,7 +35,13 @@ public class ScheduleTour {
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
-    public static ScheduleTour toEntity(Long id, String title, Long duration, String imageUrl, BigDecimal mapX, BigDecimal mapY){
+    public ScheduleTour setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+        return this;
+    }
+
+    public static ScheduleTour toEntity(Long id, String title, Long duration, String imageUrl, BigDecimal mapX, BigDecimal mapY, Schedule schedule){
+
         return ScheduleTour.builder()
                 .id(id)
                 .title(title)
@@ -43,6 +49,7 @@ public class ScheduleTour {
                 .imageUrl(imageUrl)
                 .mapX(mapX)
                 .mapY(mapY)
+                .schedule(schedule)
                 .build();
     }
 }
