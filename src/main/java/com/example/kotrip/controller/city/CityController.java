@@ -1,6 +1,7 @@
 package com.example.kotrip.controller.city;
 
 import com.example.kotrip.dto.city.CityResponseDto;
+import com.example.kotrip.dto.common.ApiResponse;
 import com.example.kotrip.entity.tourlist.City;
 import com.example.kotrip.repository.city.CityRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +17,11 @@ public class CityController {
     private final CityRepository cityRepository;
 
     @GetMapping("/city")
-    public List<CityResponseDto> cityList() {
+    public ApiResponse<List<CityResponseDto>> cityList() {
         List<City> cities = cityRepository.findAll();
         List<CityResponseDto> result = cities.stream()
                 .map(o -> new CityResponseDto(o))
                 .collect(Collectors.toList());
-        return result;
+        return ApiResponse.ok(result);
     }
 }

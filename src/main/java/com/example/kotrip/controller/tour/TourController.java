@@ -19,6 +19,6 @@ public class TourController {
     @GetMapping("/tour")
     public ApiResponse<List<TourInfoDto>> tours(@RequestParam int cityId) {
         List<TourInfoDto> tourInfoDtoList = tourRepository.findTourInfoByCityId(cityId);
-        return new ApiResponse<>(HttpStatus.OK, "Success", tourInfoDtoList);
+        return ApiResponse.ok(tourInfoDtoList);
     }
 }
