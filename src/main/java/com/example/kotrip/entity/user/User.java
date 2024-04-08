@@ -4,9 +4,19 @@ import com.example.kotrip.constants.Authority;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.tourlist.TourList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+<<<<<<< HEAD
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+=======
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+>>>>>>> feature/schedule
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;

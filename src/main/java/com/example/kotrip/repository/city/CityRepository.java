@@ -2,10 +2,9 @@ package com.example.kotrip.repository.city;
 
 import com.example.kotrip.entity.tourlist.City;
 import jakarta.persistence.EntityManager;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor

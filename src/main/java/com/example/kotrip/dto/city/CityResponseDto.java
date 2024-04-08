@@ -9,8 +9,8 @@ public class CityResponseDto {
     public int areaId;
     public String title;
     public String imageUrl;
-    public long mapX;
-    public long mapY;
+    public double mapX;
+    public double mapY;
 
     public CityResponseDto(City city) {
         areaId = city.cityId;

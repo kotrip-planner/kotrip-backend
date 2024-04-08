@@ -1,15 +1,20 @@
 package com.example.kotrip.entity.tourlist;
 
 import com.example.kotrip.entity.tourlist.hotel.Hotel;
-import com.example.kotrip.entity.tourlist.hotel.HotelInfo;
 import com.example.kotrip.entity.tourlist.tour.Tour;
 import com.example.kotrip.entity.user.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 @Entity
 @Getter
