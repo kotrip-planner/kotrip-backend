@@ -46,7 +46,8 @@ public class SecurityConfig {
                 "/api/kakao",
                 "/api/naver/driving",
                 "/city",
-                "/tour"
+                "/tour",
+                "/hotelSearch"
         );
     }
 }
