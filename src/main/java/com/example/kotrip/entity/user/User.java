@@ -1,8 +1,10 @@
 package com.example.kotrip.entity.user;
 
 import com.example.kotrip.constants.Authority;
+import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.tourlist.TourList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+<<<<<<< HEAD
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,6 +12,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+=======
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+>>>>>>> feature/schedule
 import java.util.Collection;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -40,6 +47,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<TourList> tourList;
 
+    @OneToMany(mappedBy = "user")
+    private List<Schedule> schedules = new ArrayList<>();
 
     public static User create(String kakaoUserId, String nickname) {
         return User.builder()

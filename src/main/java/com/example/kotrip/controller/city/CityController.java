@@ -1,4 +1,4 @@
-package com.example.kotrip.controller;
+package com.example.kotrip.controller.city;
 
 import com.example.kotrip.dto.city.CityResponseDto;
 import com.example.kotrip.dto.common.ApiResponse;
