@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Optional;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 public class LoginService {
 
     private static final String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
+    private static final String KAKAO_TOKEN_VALID_URL = "https://kapi.kakao.com/v1/user/access_token_info";
     private static final String POST_URL = "https://kapi.kakao.com/v2/user/me";
     private static final String REST_API_KEY = "fa498bcb6460766a009c3d798e9ac960";
     private static final String CLIENT_SECRET = "lEB0s7oBeim5d2Y4UnEBH2Owa9n32VZs";
@@ -49,12 +51,12 @@ public class LoginService {
         return ReissueResponseDto.of(accessToken, newRefreshToken);
     }
 
-    public LoginResponseDto login(String code) {
+    public LoginResponseDto login(String token) {
 
         log.info("login을 시작합니다.");
 
-        String kakaoAccessToken = getKakaoAccessToken(code);
-        HashMap<String,Object> userInfo = getUserInfo(kakaoAccessToken);
+        validateToken(token); // 토큰 유효성 검사
+        HashMap<String,Object> userInfo = getUserInfo(token);
 
         String nickname = String.valueOf(userInfo.get("nickname"));
         String kakaoId = String.valueOf(userInfo.get("id"));
@@ -108,50 +110,40 @@ public class LoginService {
         return userInfo;
     }
 
-    private String getKakaoAccessToken(String code){ // 카카오 엑세스 토큰 가져오기
-        String accessToken = "";
-
+    private void validateToken(String accessToken) {
         try {
-            URL url = new URL(REQUEST_URL);
+
+            log.info("카카오 토큰 유효성 검사 시작");
+            URL url = new URL(KAKAO_TOKEN_VALID_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setDoOutput(false);
 
-            conn.setRequestMethod("POST");
-            // setDoOutput()은 OutputStream으로 POST 데이터를 넘겨 주겠다는 옵션이다.
-            // POST 요청을 수행하려면 setDoOutput()을 true로 설정한다.
-            conn.setDoOutput(true);
-
-            // POST 요청에서 필요한 파라미터를 OutputStream을 통해 전송
-            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-            String sb = "grant_type=authorization_code" +
-                    "&client_id=" + REST_API_KEY + // REST_API_KEY
-                    "&client_secret=" + CLIENT_SECRET +
-                    "&code=" + code;
-            bufferedWriter.write(sb);
-            bufferedWriter.flush();
+            conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 
             int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
             String line = "";
             StringBuilder result = new StringBuilder();
 
-            while ((line = bufferedReader.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 result.append(line);
             }
 
             JsonElement element = JsonParser.parseString(result.toString());
 
-            accessToken = element.getAsJsonObject().get("access_token").getAsString();
+            String id = element.getAsJsonObject().get("id").getAsString();
 
-            bufferedReader.close();
-            bufferedWriter.close();
+            log.info("카카오 토큰 유효성 검증 id : {}",id);
+
+            if(id == null) {
+                throw new RuntimeException("유효하지 않은 토큰");
+            }
 
         } catch (IOException e) {
-            // 토큰 발급이 안되는 경우 유효하지 않은 값이다.
             throw new RuntimeException(e);
         }
-
-        return accessToken;
     }
 }
