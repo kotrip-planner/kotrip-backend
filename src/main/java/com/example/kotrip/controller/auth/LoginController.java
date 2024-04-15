@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api")
-public class LoginController {
+public class    LoginController {
 
     private final LoginService loginService;
 
@@ -31,10 +31,5 @@ public class LoginController {
     @PostMapping("/reissue")
     public ApiResponse<ReissueResponseDto> reissue(@Valid @RequestBody ReissueRequestDto reissueRequestDto) {
         return ApiResponse.ok(loginService.reissue(reissueRequestDto));
-    }
-
-    @GetMapping("/kakao")
-    public String kakao() {
-        return "";
     }
 }
