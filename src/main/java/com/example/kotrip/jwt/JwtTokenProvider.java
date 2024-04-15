@@ -5,6 +5,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.Decoder;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -30,6 +32,9 @@ public class JwtTokenProvider {
     private SecretKey key;
 
     public String createAccessToken(String nickname, String kakaoId){
+
+        key = getKey(Decoders.BASE64);
+
         Claims claims = Jwts.claims()
                 .add(NICKNAME, nickname)
                 .add(KAKAOID, kakaoId)
@@ -43,7 +48,15 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    @NotNull
+    private static SecretKey getKey(Decoder<CharSequence, byte[]> base64) {
+        return Keys.hmacShaKeyFor(base64.decode(secretKey));
+    }
+
     public String createRefreshToken(String nickname, String kakaoId) {
+
+        key = getKey(Decoders.BASE64);
+
         Claims claims = Jwts.claims()
                 .add(NICKNAME, nickname)
                 .add(KAKAOID, kakaoId)
@@ -58,12 +71,13 @@ public class JwtTokenProvider {
     }
 
     public String getUsername(String token) {
-        key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
+        key = getKey(Decoders.BASE64);
+        System.out.println(token);
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().get(NICKNAME,String.class);
     }
 
     public String getKakaoId(String token) {
-        key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(secretKey));
+        key = getKey(Decoders.BASE64URL);
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().get(KAKAOID,String.class);
     }
 
