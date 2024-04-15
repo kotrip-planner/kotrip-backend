@@ -1,11 +1,14 @@
-package com.example.kotrip.controller.city;
+package com.example.kotrip.controller;
 
 import com.example.kotrip.dto.city.CityResponseDto;
 import com.example.kotrip.dto.common.ApiResponse;
+import com.example.kotrip.dto.tour.TourInfoDto;
 import com.example.kotrip.entity.tourlist.City;
 import com.example.kotrip.repository.city.CityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -19,9 +22,9 @@ public class CityController {
     @GetMapping("/city")
     public ApiResponse<List<CityResponseDto>> cityList() {
         List<City> cities = cityRepository.findAll();
-        List<CityResponseDto> result = cities.stream()
+        List<CityResponseDto> cityDtoList = cities.stream()
                 .map(o -> new CityResponseDto(o))
                 .collect(Collectors.toList());
-        return ApiResponse.ok(result);
+        return new ApiResponse<>(HttpStatus.OK, "Success", cityDtoList);
     }
 }
