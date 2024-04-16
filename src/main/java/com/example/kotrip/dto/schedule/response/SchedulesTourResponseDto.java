@@ -9,5 +9,6 @@ import lombok.Getter;
 @Getter
 public class SchedulesTourResponseDto {
     private LocalDate date;
+    private String uuid;
     private List<ScheduleTourResponseDto> tours;
 }

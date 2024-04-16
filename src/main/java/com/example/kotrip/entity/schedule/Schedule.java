@@ -29,6 +29,8 @@ public class Schedule {
 
     private LocalDate time;
 
+    private String classificationId;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     User user;
@@ -37,8 +39,9 @@ public class Schedule {
     List<ScheduleTour> tours = new ArrayList<>();
 
 
-    public static Schedule toEntity(LocalDate time, User user,List<ScheduleTour> tours) {
+    public static Schedule toEntity(String classificationId, LocalDate time, User user,List<ScheduleTour> tours) {
         return Schedule.builder()
+                .classificationId(classificationId)
                 .time(time)
                 .user(user)
                 .tours(tours)

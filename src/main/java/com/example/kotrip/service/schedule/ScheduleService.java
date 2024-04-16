@@ -14,6 +14,7 @@ import com.example.kotrip.repository.schedule.ScheduleRepository;
 import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
 import com.example.kotrip.repository.tour.TourRepository;
 import com.example.kotrip.repository.user.UserRepository;
+import com.example.kotrip.util.classification.ClassificationId;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,6 +63,8 @@ public class ScheduleService {
                 data -> {
                     List<List<Integer>> result = data.get("optimalRoute");
                     LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
+
+                    String scheduleUuid = ClassificationId.getID();
                     // DB에 저장 - User에 맞게
                     for (int i = 0; i < result.size(); i++) {
                         List<ScheduleTour> tours = new ArrayList<>();
@@ -76,7 +79,7 @@ public class ScheduleService {
                             localDate = localDate.plusDays(1);
                         }
 
-                        Schedule schedule = Schedule.toEntity(localDate, user, tours);
+                        Schedule schedule = Schedule.toEntity(scheduleUuid,localDate, user, tours);
                         scheduleRepository.save(schedule);
 
                         for (int j = 0; j < schedule.getTours().size(); j++) {
@@ -110,7 +113,7 @@ public class ScheduleService {
             List<ScheduleTourResponseDto> tours = scheduleTourRepository.findScheduleToursBySchedule(schedule).orElseThrow(() -> new UsernameNotFoundException("Not found Schedule"))
                     .stream().map(tour -> ScheduleTourResponseDto.builder().id(tour.getId()).title(tour.getTitle()).imageUrl(tour.getImageUrl()).mapX(tour.getMapX()).mapY(tour.getMapY()).build()).collect(
                             Collectors.toList());
-            schedulesTourResponseDtos.add(SchedulesTourResponseDto.builder().tours(tours).date(schedule.getTime()).build());
+            schedulesTourResponseDtos.add(SchedulesTourResponseDto.builder().uuid(schedule.getClassificationId()).tours(tours).date(schedule.getTime()).build());
         }
 
         log.info("schedulesTourResponseDtos : {}", schedulesTourResponseDtos);
