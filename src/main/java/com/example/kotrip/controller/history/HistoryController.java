@@ -1,6 +1,7 @@
 package com.example.kotrip.controller.history;
 
 import com.example.kotrip.dto.common.ApiResponse;
+import com.example.kotrip.dto.history.response.HistoryResponseDto;
 import com.example.kotrip.service.history.HistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +16,7 @@ public class HistoryController {
     private final HistoryService historyService;
 
     @GetMapping
-    public ApiResponse<Object> getHistory(){
-        return ApiResponse.ok("hello");
+    public ApiResponse<HistoryResponseDto> getHistory(){
+        return ApiResponse.ok(historyService.getHistory());
     }
 }

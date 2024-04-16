@@ -81,7 +81,7 @@ public class ScheduleService {
                             localDate = localDate.plusDays(1);
                         }
 
-                        Schedule schedule = Schedule.toEntity(scheduleUuid,localDate, user, tours);
+                        Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours);
                         scheduleRepository.save(schedule);
 
                         for (int j = 0; j < schedule.getTours().size(); j++) {
