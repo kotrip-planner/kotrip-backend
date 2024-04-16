@@ -7,8 +7,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class SchedulesTourResponseDto {
+public class ScheduleToursResponseDto {
     private LocalDate date;
-    private String uuid;
     private List<ScheduleTourResponseDto> tours;
 }

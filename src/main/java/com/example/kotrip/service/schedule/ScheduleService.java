@@ -1,9 +1,10 @@
 package com.example.kotrip.service.schedule;
 
+import com.example.kotrip.dto.schedule.response.ScheduleEachResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleTourResponseDto;
 import com.example.kotrip.dto.schedule.response.SchedulesResponseDto;
-import com.example.kotrip.dto.schedule.response.SchedulesTourResponseDto;
+import com.example.kotrip.dto.schedule.response.ScheduleToursResponseDto;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
 import com.example.kotrip.entity.tourlist.tour.TourInfo;
@@ -18,6 +19,7 @@ import com.example.kotrip.util.classification.ClassificationId;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -107,19 +109,42 @@ public class ScheduleService {
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("Not found User"));
         List<Schedule> schedules = scheduleRepository.findSchedulesByUser(user).orElseThrow(() -> new UsernameNotFoundException("Not found schedule"));
 
-        List<SchedulesTourResponseDto> schedulesTourResponseDtos = new ArrayList<>();
+        List<ScheduleToursResponseDto> scheduleToursResponseDtos = new ArrayList<>();
+        List<ScheduleEachResponseDto> scheduleEachResponseDtos = new ArrayList<>();
 
-        for(Schedule schedule: schedules) {
+        HashMap<String, List<ScheduleToursResponseDto>> map = new HashMap<>();
+
+        String first = schedules.get(0).getClassificationId();
+        for(Schedule schedule: schedules) { // 스케줄 전부 가져요기
+
+            String classificationId = schedule.getClassificationId();
+
+            if(!classificationId.equals(first)) {
+                ScheduleToursResponseDto tours = scheduleToursResponseDtos.get(scheduleToursResponseDtos.size() - 1);
+                scheduleToursResponseDtos = new ArrayList<>(); // 초기화
+                scheduleToursResponseDtos.add(tours);
+
+            }
+
+            log.info("id : {}",classificationId);
+
             List<ScheduleTourResponseDto> tours = scheduleTourRepository.findScheduleToursBySchedule(schedule).orElseThrow(() -> new UsernameNotFoundException("Not found Schedule"))
                     .stream().map(tour -> ScheduleTourResponseDto.builder().id(tour.getId()).title(tour.getTitle()).imageUrl(tour.getImageUrl()).mapX(tour.getMapX()).mapY(tour.getMapY()).build()).collect(
                             Collectors.toList());
-            schedulesTourResponseDtos.add(SchedulesTourResponseDto.builder().uuid(schedule.getClassificationId()).tours(tours).date(schedule.getTime()).build());
+
+            scheduleToursResponseDtos.add(ScheduleToursResponseDto.builder().tours(tours).date(schedule.getTime()).build());
+
+            map.put(classificationId, scheduleToursResponseDtos);
         }
 
-        log.info("schedulesTourResponseDtos : {}", schedulesTourResponseDtos);
+        for(String key : map.keySet()) {
+            scheduleEachResponseDtos.add(ScheduleEachResponseDto.builder().uuid(key).schedule(map.get(key)).build());
+        }
+
+        log.info("schedulesTourResponseDtos : {}", scheduleToursResponseDtos);
 
         return SchedulesResponseDto.builder()
-                .schedule(schedulesTourResponseDtos)
+                .schedules(scheduleEachResponseDtos)
                 .build();
     }
 
