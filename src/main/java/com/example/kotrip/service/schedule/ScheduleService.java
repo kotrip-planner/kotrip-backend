@@ -120,10 +120,8 @@ public class ScheduleService {
             String classificationId = schedule.getClassificationId();
 
             if(!classificationId.equals(first)) {
-                ScheduleToursResponseDto tours = scheduleToursResponseDtos.get(scheduleToursResponseDtos.size() - 1);
                 scheduleToursResponseDtos = new ArrayList<>(); // 초기화
-                scheduleToursResponseDtos.add(tours);
-
+                first = classificationId;
             }
 
             log.info("id : {}",classificationId);
