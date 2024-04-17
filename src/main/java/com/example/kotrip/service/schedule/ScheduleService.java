@@ -1,5 +1,6 @@
 package com.example.kotrip.service.schedule;
 
+import com.example.kotrip.dto.schedule.request.ScheduleUuidDto;
 import com.example.kotrip.dto.schedule.response.ScheduleEachResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleTourResponseDto;
@@ -106,6 +107,8 @@ public class ScheduleService {
     public SchedulesResponseDto getSchedule() { // 스케줄 가져오는 함수
         Authentication authentication = getAuthentication();
 
+        log.info("스케줄 가져오는 함수 실행");
+
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("Not found User"));
         List<Schedule> schedules = scheduleRepository.findSchedulesByUser(user).orElseThrow(() -> new UsernameNotFoundException("Not found schedule"));
 
@@ -140,7 +143,6 @@ public class ScheduleService {
         }
 
         log.info("schedulesTourResponseDtos : {}", scheduleToursResponseDtos);
-
         return SchedulesResponseDto.builder()
                 .schedules(scheduleEachResponseDtos)
                 .build();
