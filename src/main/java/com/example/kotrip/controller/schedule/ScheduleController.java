@@ -1,6 +1,7 @@
 package com.example.kotrip.controller.schedule;
 
 import com.example.kotrip.dto.common.ApiResponse;
+import com.example.kotrip.dto.schedule.request.ScheduleUuidDto;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 import com.example.kotrip.dto.schedule.response.SchedulesResponseDto;
 import com.example.kotrip.naver.NaverRequestDto;

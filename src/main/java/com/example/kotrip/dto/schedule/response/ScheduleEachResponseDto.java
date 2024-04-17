@@ -6,6 +6,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class SchedulesResponseDto {
-    private List<ScheduleEachResponseDto> schedules; // schedules
+public class ScheduleEachResponseDto {
+    private String uuid;
+    private List<ScheduleToursResponseDto> schedule;
 }
