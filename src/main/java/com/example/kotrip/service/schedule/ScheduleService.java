@@ -1,9 +1,11 @@
 package com.example.kotrip.service.schedule;
 
+import com.example.kotrip.dto.schedule.request.ScheduleUuidDto;
+import com.example.kotrip.dto.schedule.response.ScheduleEachResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleTourResponseDto;
 import com.example.kotrip.dto.schedule.response.SchedulesResponseDto;
-import com.example.kotrip.dto.schedule.response.SchedulesTourResponseDto;
+import com.example.kotrip.dto.schedule.response.ScheduleToursResponseDto;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
 import com.example.kotrip.entity.tourlist.tour.TourInfo;
@@ -14,9 +16,11 @@ import com.example.kotrip.repository.schedule.ScheduleRepository;
 import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
 import com.example.kotrip.repository.tour.TourRepository;
 import com.example.kotrip.repository.user.UserRepository;
+import com.example.kotrip.util.classification.ClassificationId;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -62,6 +66,8 @@ public class ScheduleService {
                 data -> {
                     List<List<Integer>> result = data.get("optimalRoute");
                     LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
+
+                    String scheduleUuid = ClassificationId.getID();
                     // DB에 저장 - User에 맞게
                     for (int i = 0; i < result.size(); i++) {
                         List<ScheduleTour> tours = new ArrayList<>();
@@ -76,7 +82,7 @@ public class ScheduleService {
                             localDate = localDate.plusDays(1);
                         }
 
-                        Schedule schedule = Schedule.toEntity(localDate, user, tours);
+                        Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours);
                         scheduleRepository.save(schedule);
 
                         for (int j = 0; j < schedule.getTours().size(); j++) {
@@ -101,22 +107,44 @@ public class ScheduleService {
     public SchedulesResponseDto getSchedule() { // 스케줄 가져오는 함수
         Authentication authentication = getAuthentication();
 
+        log.info("스케줄 가져오는 함수 실행");
+
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("Not found User"));
         List<Schedule> schedules = scheduleRepository.findSchedulesByUser(user).orElseThrow(() -> new UsernameNotFoundException("Not found schedule"));
 
-        List<SchedulesTourResponseDto> schedulesTourResponseDtos = new ArrayList<>();
+        List<ScheduleToursResponseDto> scheduleToursResponseDtos = new ArrayList<>();
+        List<ScheduleEachResponseDto> scheduleEachResponseDtos = new ArrayList<>();
 
-        for(Schedule schedule: schedules) {
+        HashMap<String, List<ScheduleToursResponseDto>> map = new HashMap<>();
+
+        String first = schedules.get(0).getClassificationId();
+        for(Schedule schedule: schedules) { // 스케줄 전부 가져요기
+
+            String classificationId = schedule.getClassificationId();
+
+            if(!classificationId.equals(first)) {
+                scheduleToursResponseDtos = new ArrayList<>(); // 초기화
+                first = classificationId;
+            }
+
+            log.info("id : {}",classificationId);
+
             List<ScheduleTourResponseDto> tours = scheduleTourRepository.findScheduleToursBySchedule(schedule).orElseThrow(() -> new UsernameNotFoundException("Not found Schedule"))
                     .stream().map(tour -> ScheduleTourResponseDto.builder().id(tour.getId()).title(tour.getTitle()).imageUrl(tour.getImageUrl()).mapX(tour.getMapX()).mapY(tour.getMapY()).build()).collect(
                             Collectors.toList());
-            schedulesTourResponseDtos.add(SchedulesTourResponseDto.builder().tours(tours).date(schedule.getTime()).build());
+
+            scheduleToursResponseDtos.add(ScheduleToursResponseDto.builder().tours(tours).date(schedule.getTime()).build());
+
+            map.put(classificationId, scheduleToursResponseDtos);
         }
 
-        log.info("schedulesTourResponseDtos : {}", schedulesTourResponseDtos);
+        for(String key : map.keySet()) {
+            scheduleEachResponseDtos.add(ScheduleEachResponseDto.builder().uuid(key).schedule(map.get(key)).build());
+        }
 
+        log.info("schedulesTourResponseDtos : {}", scheduleToursResponseDtos);
         return SchedulesResponseDto.builder()
-                .schedule(schedulesTourResponseDtos)
+                .schedules(scheduleEachResponseDtos)
                 .build();
     }
 

@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ScheduleRepository extends JpaRepository<Schedule,Long> {
     Optional<List<Schedule>> findSchedulesByUser(User user);
+    Optional<List<Schedule>> findSchedulesByClassificationId(String id);
 }
