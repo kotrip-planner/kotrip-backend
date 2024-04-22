@@ -3,6 +3,7 @@ package com.example.kotrip.entity.schedule;
 import com.example.kotrip.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -33,11 +34,11 @@ public class Schedule {
 
     private String classificationId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     User user;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     List<ScheduleTour> tours = new ArrayList<>();
 
 
