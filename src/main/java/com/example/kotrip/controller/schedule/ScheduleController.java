@@ -23,7 +23,7 @@ public class ScheduleController {
    @PostMapping("")
    public ApiResponse<ScheduleResponseDto> addSchedule(
            @RequestBody @Valid NaverRequestDto naverRequestDto
-           ) throws InterruptedException {
+           ) {
        return ApiResponse.ok(scheduleService.setSchedule(naverRequestDto));
    }
 
