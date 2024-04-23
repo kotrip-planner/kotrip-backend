@@ -24,9 +24,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Schedule {
 
-    @Id @GeneratedValue
+    @Id
     @Column(name = "schedule_id")
-    private Long id;
+    private String id;
 
     private Integer areaId;
 
@@ -42,13 +42,14 @@ public class Schedule {
     List<ScheduleTour> tours = new ArrayList<>();
 
 
-    public static Schedule toEntity(String classificationId, int areaId, LocalDate time, User user,List<ScheduleTour> tours) {
+    public static Schedule toEntity(String classificationId, int areaId, LocalDate time, User user,List<ScheduleTour> tours, String id) {
         return Schedule.builder()
                 .classificationId(classificationId)
                 .areaId(areaId)
                 .time(time)
                 .user(user)
                 .tours(tours)
+                .id(id)
                 .build();
     }
 }

@@ -23,7 +23,7 @@ public class ScheduleJdbcRepository {
                     ps.setString(2, s.getClassificationId().toString());
                     ps.setString(3, s.getTime().toString());
                     ps.setString(4, s.getUser().getUserId().toString());
-
+                    ps.setString(5, s.getId());
                 });
     }
 }

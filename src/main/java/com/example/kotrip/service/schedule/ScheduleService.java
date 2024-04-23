@@ -52,7 +52,7 @@ public class ScheduleService {
 
     // 일차별 스케줄을 생성하는 api
     @Transactional
-    public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto){
+    public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto) throws InterruptedException {
 
         Authentication authentication = getAuthentication();
 
@@ -67,6 +67,8 @@ public class ScheduleService {
         optimalResult = drivingResult.flatMap(driving -> optimalDurationService.getOptimalRoute(naverRequestDto, driving)
                     .map(optimalRoute -> Collections.singletonMap("optimalRoute", optimalRoute)));
 
+        String scheduleUuid = ClassificationId.getID();
+
         optimalResult.subscribe(
                 data -> {
                     List<List<Integer>> result = data.get("optimalRoute");
@@ -75,7 +77,6 @@ public class ScheduleService {
                     List<ScheduleTour> scheduleTours = new ArrayList<>();
                     List<Integer> tourIds = new ArrayList<>();
 
-                    String scheduleUuid = ClassificationId.getID();
                     // DB에 저장 - User에 맞게
                     for (int i = 0; i < result.size(); i++) {
                         List<ScheduleTour> tours = new ArrayList<>();
@@ -95,7 +96,7 @@ public class ScheduleService {
                             localDate = localDate.plusDays(1);
                         }
 
-                        Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours);
+                        Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours, ClassificationId.getID());
                         schedules.add(schedule);
 
                         for (int j = 0; j < schedule.getTours().size(); j++) {
@@ -106,7 +107,7 @@ public class ScheduleService {
                     }
 
                     // 쿼리 한번에 날리기
-                    scheduleRepository.saveAll(schedules);
+                    scheduleJdbcRepository.saveAll(schedules);
                     scheduleTourJdbcRepository.saveAll(scheduleTours);
                 },
                 error -> {
@@ -118,7 +119,7 @@ public class ScheduleService {
         );
 
         // 최적 경로 만든 후 저장
-        return new ScheduleResponseDto(SET_SCHEDULE_RESULT);
+        return new ScheduleResponseDto(scheduleUuid);
     }
 
     public SchedulesResponseDto getSchedule() { // 스케줄 가져오는 함수
