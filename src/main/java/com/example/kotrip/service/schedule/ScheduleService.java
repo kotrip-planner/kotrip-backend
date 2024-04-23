@@ -1,18 +1,19 @@
 package com.example.kotrip.service.schedule;
 
-import com.example.kotrip.dto.schedule.request.ScheduleUuidDto;
 import com.example.kotrip.dto.schedule.response.ScheduleEachResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleTourResponseDto;
-import com.example.kotrip.dto.schedule.response.SchedulesResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleToursResponseDto;
+import com.example.kotrip.dto.schedule.response.SchedulesResponseDto;
+import com.example.kotrip.dto.tour.TourInfoDto;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
-import com.example.kotrip.entity.tourlist.tour.TourInfo;
 import com.example.kotrip.entity.user.User;
 import com.example.kotrip.naver.NaverRequestDto;
 import com.example.kotrip.naver.OptimalDurationService;
+import com.example.kotrip.repository.schedule.ScheduleJdbcRepository;
 import com.example.kotrip.repository.schedule.ScheduleRepository;
+import com.example.kotrip.repository.scheduleTour.ScheduleTourJdbcRepository;
 import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
 import com.example.kotrip.repository.tour.TourRepository;
 import com.example.kotrip.repository.user.UserRepository;
@@ -30,6 +31,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -43,11 +45,14 @@ public class ScheduleService {
 
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ScheduleJdbcRepository scheduleJdbcRepository;
     private final ScheduleTourRepository scheduleTourRepository;
+    private final ScheduleTourJdbcRepository scheduleTourJdbcRepository;
     private final TourRepository tourRepository;
 
     // 일차별 스케줄을 생성하는 api
-    public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto){
+    @Transactional
+    public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto) throws InterruptedException {
 
         Authentication authentication = getAuthentication();
 
@@ -62,35 +67,48 @@ public class ScheduleService {
         optimalResult = drivingResult.flatMap(driving -> optimalDurationService.getOptimalRoute(naverRequestDto, driving)
                     .map(optimalRoute -> Collections.singletonMap("optimalRoute", optimalRoute)));
 
+        String scheduleUuid = ClassificationId.getID();
+
         optimalResult.subscribe(
                 data -> {
                     List<List<Integer>> result = data.get("optimalRoute");
                     LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
+                    List<Schedule> schedules = new ArrayList<>();
+                    List<ScheduleTour> scheduleTours = new ArrayList<>();
+                    List<Integer> tourIds = new ArrayList<>();
 
-                    String scheduleUuid = ClassificationId.getID();
                     // DB에 저장 - User에 맞게
                     for (int i = 0; i < result.size(); i++) {
                         List<ScheduleTour> tours = new ArrayList<>();
                         for (int j = 0; j < result.get(i).size(); j++) {
                             int tourId = result.get(i).get(j);
-                            TourInfo tourInfo = tourRepository.findTourInfoById(tourId).orElseThrow(() -> new IllegalArgumentException("여행 정보 가져오기"));
-                            String imageUrl = getImageUrl(tourInfo);
-                            tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L,imageUrl, tourInfo.getMapY(), tourInfo.getMapX(),null));
+                            tourIds.add(tourId);
                         }
+
+                        List<TourInfoDto> tourInfos = tourRepository.findByIdIn(tourIds);
+                        tourIds.clear();
+                        for(TourInfoDto tourInfo : tourInfos) {
+                            tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L,tourInfo.getImageUrl(), tourInfo.getMapY(), tourInfo.getMapX(),null));
+                        }
+
                         // schedule과 id를 묶어주어야 함
                         if(i >= 1) {
                             localDate = localDate.plusDays(1);
                         }
 
-                        Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours);
-                        scheduleRepository.save(schedule);
+                        Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours, ClassificationId.getID());
+                        schedules.add(schedule);
 
                         for (int j = 0; j < schedule.getTours().size(); j++) {
                             ScheduleTour scheduleTour = tours.get(j).setSchedule(schedule);
-                            scheduleTourRepository.save(scheduleTour);
+                            scheduleTours.add(scheduleTour);
                         }
 
                     }
+
+                    // 쿼리 한번에 날리기
+                    scheduleJdbcRepository.saveAll(schedules);
+                    scheduleTourJdbcRepository.saveAll(scheduleTours);
                 },
                 error -> {
                     System.out.println(error);
@@ -101,7 +119,7 @@ public class ScheduleService {
         );
 
         // 최적 경로 만든 후 저장
-        return new ScheduleResponseDto(SET_SCHEDULE_RESULT);
+        return new ScheduleResponseDto(scheduleUuid);
     }
 
     public SchedulesResponseDto getSchedule() { // 스케줄 가져오는 함수
@@ -150,14 +168,5 @@ public class ScheduleService {
 
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    private String getImageUrl(TourInfo tourInfo) {
-
-        if(tourInfo.getImageUrl1() != null) {
-            return tourInfo.getImageUrl1();
-        }
-
-        return tourInfo.getImageUrl2();
     }
 }

@@ -2,10 +2,8 @@ package com.example.kotrip.controller.history;
 
 import com.example.kotrip.dto.common.ApiResponse;
 import com.example.kotrip.dto.history.response.HistoryResponseDto;
-import com.example.kotrip.dto.history.response.HistoryScheduleResponseDto;
 import com.example.kotrip.dto.schedule.request.ScheduleUuidDto;
 import com.example.kotrip.dto.schedule.response.ScheduleEachResponseDto;
-import com.example.kotrip.dto.schedule.response.ScheduleToursResponseDto;
 import com.example.kotrip.service.history.HistoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

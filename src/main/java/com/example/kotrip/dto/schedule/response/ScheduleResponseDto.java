@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class ScheduleResponseDto {
 
-    String message;
+    String uuid;
 
-    public ScheduleResponseDto(String message) {
-        this.message = message;
+    public ScheduleResponseDto(final String uuid) {
+        this.uuid = uuid;
     }
 }
