@@ -3,6 +3,7 @@ package com.example.kotrip.entity.schedule;
 import com.example.kotrip.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -23,9 +24,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Schedule {
 
-    @Id @GeneratedValue
+    @Id
     @Column(name = "schedule_id")
-    private Long id;
+    private String id;
 
     private Integer areaId;
 
@@ -33,21 +34,22 @@ public class Schedule {
 
     private String classificationId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     User user;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
     List<ScheduleTour> tours = new ArrayList<>();
 
 
-    public static Schedule toEntity(String classificationId, int areaId, LocalDate time, User user,List<ScheduleTour> tours) {
+    public static Schedule toEntity(String classificationId, int areaId, LocalDate time, User user,List<ScheduleTour> tours, String id) {
         return Schedule.builder()
                 .classificationId(classificationId)
                 .areaId(areaId)
                 .time(time)
                 .user(user)
                 .tours(tours)
+                .id(id)
                 .build();
     }
 }

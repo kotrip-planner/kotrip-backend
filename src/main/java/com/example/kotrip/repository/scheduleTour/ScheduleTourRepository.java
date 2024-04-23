@@ -7,5 +7,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ScheduleTourRepository extends JpaRepository<ScheduleTour, Long> {
+
     Optional<List<ScheduleTour>> findScheduleToursBySchedule(Schedule schedule);
 }
