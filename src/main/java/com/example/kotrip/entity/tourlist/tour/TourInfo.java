@@ -37,11 +37,11 @@ public class TourInfo {
 
     public String imageUrl2;
 
-    @Column(name = "map_x", precision = 13, scale = 10)
-    private BigDecimal mapX;
+    @Column(name = "map_x")
+    private Double mapX;
 
-    @Column(name = "map_y", precision = 13, scale = 10)
-    private BigDecimal mapY;
+    @Column(name = "map_y")
+    private Double mapY;
 
     private String tel;
 

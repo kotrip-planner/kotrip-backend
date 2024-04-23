@@ -30,9 +30,9 @@ public class ScheduleTour {
 
     private String imageUrl;
 
-    private BigDecimal mapX;
+    private Double mapX;
 
-    private BigDecimal mapY;
+    private Double mapY;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
@@ -43,7 +43,7 @@ public class ScheduleTour {
         return this;
     }
 
-    public static ScheduleTour toEntity(Long id, String title, Long duration, String imageUrl, BigDecimal mapX, BigDecimal mapY, Schedule schedule){
+    public static ScheduleTour toEntity(Long id, String title, Long duration, String imageUrl, double mapX, double mapY, Schedule schedule){
 
         return ScheduleTour.builder()
                 .id(id)

@@ -10,6 +10,6 @@ public class ScheduleTourResponseDto {
     private Long id;
     private String title;
     private String imageUrl;
-    private BigDecimal mapX;
-    private BigDecimal mapY;
+    private Double mapX;
+    private Double mapY;
 }
