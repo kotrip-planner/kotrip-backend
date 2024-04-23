@@ -85,6 +85,10 @@ public class HistoryService {
 
         // uuid에 맞는 스케줄 가져오기
         List<Schedule> schedules = scheduleRepository.findSchedulesByClassificationIdOrderByTime(uuid).orElseThrow(() -> new IllegalArgumentException("스케줄이 존재하지 않습니다."));
+
+        int areaId = schedules.get(0).getAreaId();
+        City city = cityRepository.findById(areaId).orElseThrow(() -> new IllegalArgumentException("도시가 존재하지 않습니다."));
+
         ScheduleToursResponseDto scheduleToursResponseDto = null;
         List<ScheduleToursResponseDto> scheduleToursResponseDtos = new ArrayList<>();
 
@@ -115,6 +119,7 @@ public class HistoryService {
 
         return ScheduleEachResponseDto.builder()
                 .schedule(scheduleToursResponseDtos)
+                .cityName(city.getTitle())
                 .uuid(uuid)
                 .build();
     }

@@ -8,5 +8,6 @@ import lombok.Getter;
 @Getter
 public class ScheduleEachResponseDto {
     private String uuid;
+    private String city;
     private List<ScheduleToursResponseDto> schedule;
 }

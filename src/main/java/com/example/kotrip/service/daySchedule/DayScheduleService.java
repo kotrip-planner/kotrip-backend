@@ -1,5 +1,6 @@
 package com.example.kotrip.service.daySchedule;
 
+import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 import com.example.kotrip.dto.tour.TourInfoDto;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
@@ -7,7 +8,7 @@ import com.example.kotrip.entity.user.User;
 import com.example.kotrip.naver.NaverRequestDto;
 import com.example.kotrip.naver.OptimalDurationService;
 import com.example.kotrip.repository.schedule.ScheduleRepository;
-import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
+import com.example.kotrip.repository.scheduleTour.ScheduleTourJdbcRepository;
 import com.example.kotrip.repository.tour.TourRepository;
 import com.example.kotrip.repository.user.UserRepository;
 import com.example.kotrip.util.classification.ClassificationId;
@@ -30,11 +31,11 @@ public class DayScheduleService {
     private final UserRepository userRepository;
     private final TourRepository tourRepository;
     private final ScheduleRepository scheduleRepository;
-    private final ScheduleTourRepository scheduleTourRepository;
+    private final ScheduleTourJdbcRepository scheduleTourJdbcRepository;
 
 
     @Transactional
-    public String setSchedule(NaverRequestDto naverRequestDto) {
+    public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto) {
 
         Mono<List<List<Integer>>> drivingResult = optimalDurationService.getDriving(naverRequestDto);
 
@@ -53,9 +54,9 @@ public class DayScheduleService {
         List<ScheduleTour> tours = new ArrayList<>();
 
         for (int i = 0; i < result.size(); i++) {
-                int tourId = result.get(i);
-                tourIds.add(tourId);
-            }
+            int tourId = result.get(i);
+            tourIds.add(tourId);
+        }
 
         List<TourInfoDto> tourInfos = tourRepository.findByIdIn(tourIds);
 
@@ -66,13 +67,14 @@ public class DayScheduleService {
         Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours, ClassificationId.getID());
 
         for (int j = 0; j < schedule.getTours().size(); j++) {
-            ScheduleTour scheduleTour = tours.get(j).setSchedule(schedule);
-            //scheduleTours.add(scheduleTour);
+            tours.get(j).setSchedule(schedule);
         }
 
+        scheduleTourJdbcRepository.saveAll(tours);
+        scheduleRepository.save(schedule);
 
         // 쿼리 한번에 날리기 - bulk insert
-        return "hello";
+        return new ScheduleResponseDto(scheduleUuid);
     }
 
     private Authentication getAuthentication() {
