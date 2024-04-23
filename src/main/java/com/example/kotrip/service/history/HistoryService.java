@@ -119,7 +119,7 @@ public class HistoryService {
 
         return ScheduleEachResponseDto.builder()
                 .schedule(scheduleToursResponseDtos)
-                .cityName(city.getTitle())
+                .city(city.getTitle())
                 .uuid(uuid)
                 .build();
     }
