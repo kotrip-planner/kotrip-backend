@@ -84,7 +84,7 @@ public class HistoryService {
         String uuid = scheduleUuidDto.getUuid();
 
         // uuid에 맞는 스케줄 가져오기
-        List<Schedule> schedules = scheduleRepository.findSchedulesByClassificationId(uuid).orElseThrow(() -> new IllegalArgumentException("스케줄이 존재하지 않습니다."));
+        List<Schedule> schedules = scheduleRepository.findSchedulesByClassificationIdOrderByTime(uuid).orElseThrow(() -> new IllegalArgumentException("스케줄이 존재하지 않습니다."));
         ScheduleToursResponseDto scheduleToursResponseDto = null;
         List<ScheduleToursResponseDto> scheduleToursResponseDtos = new ArrayList<>();
 
