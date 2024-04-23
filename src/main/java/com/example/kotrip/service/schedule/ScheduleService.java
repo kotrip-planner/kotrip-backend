@@ -113,7 +113,7 @@ public class ScheduleService {
         log.info("스케줄 가져오는 함수 실행");
 
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("Not found User"));
-        List<Schedule> schedules = scheduleRepository.findSchedulesByUser(user).orElseThrow(() -> new UsernameNotFoundException("Not found schedule"));
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserOrderByTime(user).orElseThrow(() -> new UsernameNotFoundException("Not found schedule"));
 
         List<ScheduleToursResponseDto> scheduleToursResponseDtos = new ArrayList<>();
         List<ScheduleEachResponseDto> scheduleEachResponseDtos = new ArrayList<>();

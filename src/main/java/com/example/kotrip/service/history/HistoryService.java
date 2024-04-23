@@ -41,7 +41,7 @@ public class HistoryService {
         Authentication authentication = getAuthentication();
 
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
-        List<Schedule> schedules = scheduleRepository.findSchedulesByUser(user).orElseThrow(() -> new UsernameNotFoundException("Not found schedule"));
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserOrderByTime(user).orElseThrow(() -> new UsernameNotFoundException("Not found schedule"));
         List<HistoryEachResponseDto> historyEachResponseDtos = new ArrayList<>();
 
         HashMap<String, List<Schedule>> map = new HashMap<>();
