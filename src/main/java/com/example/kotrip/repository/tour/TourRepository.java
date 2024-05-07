@@ -20,4 +20,7 @@ public interface TourRepository extends JpaRepository<TourInfo, Long> {
 
     @Query("SELECT distinct new com.example.kotrip.dto.tour.TourInfoDto(ti.id, ti.title, ti.imageUrl1, ti.imageUrl2, ti.mapY, ti.mapX) FROM TourInfo ti WHERE ti.id IN :ids")
     List<TourInfoDto> findByIdIn(List<Integer> ids);
+
+    @Query("SELECT distinct new com.example.kotrip.dto.tour.TourInfoDto(ti.id, ti.title, ti.imageUrl1, ti.imageUrl2, ti.mapY, ti.mapX) FROM TourInfo ti WHERE ti.id =:id")
+    TourInfoDto findByTourid(Integer id);
 }
