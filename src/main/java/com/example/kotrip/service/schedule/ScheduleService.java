@@ -66,6 +66,8 @@ public class ScheduleService {
         String title = naverRequestDto.getTitle();
         List<List<Integer>> result = drivingResult.block();
 
+        System.out.println("result = " + result);
+
         LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
         List<Schedule> schedules = new ArrayList<>();
         List<ScheduleTour> scheduleTours = new ArrayList<>();
@@ -79,7 +81,12 @@ public class ScheduleService {
                 tourIds.add(tourId);
             }
 
-            List<TourInfoDto> tourInfos = tourRepository.findByIdIn(tourIds);
+            List<TourInfoDto> tourInfos = new ArrayList<>();
+            for (Integer tourId : tourIds) {
+                TourInfoDto tourInfoDto = tourRepository.findByTourid(tourId);
+                tourInfos.add(tourInfoDto);
+            }
+
             tourIds.clear();
             for(TourInfoDto tourInfo : tourInfos) {
                 tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L,tourInfo.getImageUrl(), tourInfo.getMapY(), tourInfo.getMapX(),null));
@@ -99,6 +106,13 @@ public class ScheduleService {
             }
 
         }
+
+        System.out.println("schedules = " + schedules.get(0));
+        System.out.println("schedules = " + schedules);
+        for (ScheduleTour scheduleTour : scheduleTours) {
+            System.out.println("scheduleTour = " + scheduleTour.toString());
+        }
+
 
         // 쿼리 한번에 날리기 - bulk insert
         scheduleJdbcRepository.saveAll(schedules);
