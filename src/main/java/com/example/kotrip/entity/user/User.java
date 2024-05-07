@@ -2,7 +2,6 @@ package com.example.kotrip.entity.user;
 
 import com.example.kotrip.constants.Authority;
 import com.example.kotrip.entity.schedule.Schedule;
-import com.example.kotrip.entity.tourlist.TourList;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -39,10 +38,6 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Authority authority;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "user")
-    private List<TourList> tourList;
 
     @OneToMany(mappedBy = "user")
     private List<Schedule> schedules = new ArrayList<>();

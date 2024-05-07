@@ -1,7 +1,7 @@
 package com.example.kotrip.repository.tour;
 
 import com.example.kotrip.dto.tour.TourInfoDto;
-import com.example.kotrip.entity.tourlist.tour.TourInfo;
+import com.example.kotrip.entity.tour.TourInfo;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

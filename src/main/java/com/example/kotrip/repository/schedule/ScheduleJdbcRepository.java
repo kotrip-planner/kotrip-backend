@@ -13,7 +13,7 @@ public class ScheduleJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public void saveAll(List<Schedule> schedules) {
-        String sql = "INSERT INTO schedule (area_id, classification_id, time, user_id, schedule_id) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO schedule (area_id, classification_id, time, user_id, schedule_id, title) VALUES (?, ?, ?, ?, ?, ?)";
 
         jdbcTemplate.batchUpdate(sql,
                 schedules,
@@ -24,6 +24,7 @@ public class ScheduleJdbcRepository {
                     ps.setString(3, s.getTime().toString());
                     ps.setString(4, s.getUser().getUserId().toString());
                     ps.setString(5, s.getId());
+                    ps.setString(6, s.getTitle());
                 });
     }
 }

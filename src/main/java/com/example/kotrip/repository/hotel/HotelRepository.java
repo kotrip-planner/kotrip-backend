@@ -1,7 +1,7 @@
 package com.example.kotrip.repository.hotel;
 
 import com.example.kotrip.dto.hotel.HotelSearchInterface;
-import com.example.kotrip.entity.tourlist.hotel.HotelInfo;
+import com.example.kotrip.entity.hotel.HotelInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

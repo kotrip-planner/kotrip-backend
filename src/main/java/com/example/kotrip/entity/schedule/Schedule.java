@@ -4,7 +4,6 @@ import com.example.kotrip.entity.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -28,6 +27,8 @@ public class Schedule {
     @Column(name = "schedule_id")
     private String id;
 
+    private String title;
+
     private Integer areaId;
 
     private LocalDate time;
@@ -42,8 +43,9 @@ public class Schedule {
     List<ScheduleTour> tours = new ArrayList<>();
 
 
-    public static Schedule toEntity(String classificationId, int areaId, LocalDate time, User user,List<ScheduleTour> tours, String id) {
+    public static Schedule toEntity(String title, String classificationId, int areaId, LocalDate time, User user,List<ScheduleTour> tours, String id) {
         return Schedule.builder()
+                .title(title)
                 .classificationId(classificationId)
                 .areaId(areaId)
                 .time(time)

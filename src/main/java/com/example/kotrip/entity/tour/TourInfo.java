@@ -1,15 +1,13 @@
-package com.example.kotrip.entity.tourlist.tour;
+package com.example.kotrip.entity.tour;
 
-import com.example.kotrip.entity.tourlist.City;
+import com.example.kotrip.entity.city.City;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,9 +23,6 @@ public class TourInfo {
     @ManyToOne
     @JoinColumn(name = "city_id")
     public City city;
-
-    @OneToOne(mappedBy = "tourInfo")
-    public Tour tour;
 
     public String addr1;
 

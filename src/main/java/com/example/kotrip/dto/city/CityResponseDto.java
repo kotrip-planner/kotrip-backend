@@ -1,6 +1,6 @@
 package com.example.kotrip.dto.city;
 
-import com.example.kotrip.entity.tourlist.City;
+import com.example.kotrip.entity.city.City;
 import lombok.Getter;
 import lombok.Setter;
 

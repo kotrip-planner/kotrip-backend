@@ -47,6 +47,7 @@ public class DayScheduleService {
         // 데이터 저장
 
         String scheduleUuid = ClassificationId.getID();
+        String title = naverRequestDto.getTitle();
         List<Integer> result = drivingResult.block().get(0);
 
         LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
@@ -64,14 +65,14 @@ public class DayScheduleService {
             tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L,tourInfo.getImageUrl(), tourInfo.getMapY(), tourInfo.getMapX(),null));
         }
 
-        Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours, ClassificationId.getID());
+        Schedule schedule = Schedule.toEntity(title, scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours, ClassificationId.getID());
 
         for (int j = 0; j < schedule.getTours().size(); j++) {
             tours.get(j).setSchedule(schedule);
         }
 
-        scheduleTourJdbcRepository.saveAll(tours);
         scheduleRepository.save(schedule);
+        scheduleTourJdbcRepository.saveAll(tours);
 
         // 쿼리 한번에 날리기 - bulk insert
         return new ScheduleResponseDto(scheduleUuid);

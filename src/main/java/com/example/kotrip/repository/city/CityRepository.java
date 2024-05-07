@@ -1,6 +1,6 @@
 package com.example.kotrip.repository.city;
 
-import com.example.kotrip.entity.tourlist.City;
+import com.example.kotrip.entity.city.City;
 import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;

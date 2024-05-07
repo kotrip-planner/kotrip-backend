@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ScheduleEachResponseDto {
+    private String title;
     private String uuid;
     private String city;
     private List<ScheduleToursResponseDto> schedule;

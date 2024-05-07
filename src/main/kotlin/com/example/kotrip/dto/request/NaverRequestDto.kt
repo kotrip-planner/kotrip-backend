@@ -7,6 +7,7 @@ import java.time.LocalDate
 
 @Getter
 data class NaverRequestDto(
+    @JsonProperty("title") val title: String,
     @JsonProperty("kotrip") val kotrip: List<NaverKotripDto>,
     @JsonProperty("areaId") val areaId: Int
 )

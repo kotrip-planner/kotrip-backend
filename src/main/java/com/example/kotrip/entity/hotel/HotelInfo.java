@@ -1,6 +1,6 @@
-package com.example.kotrip.entity.tourlist.hotel;
+package com.example.kotrip.entity.hotel;
 
-import com.example.kotrip.entity.tourlist.City;
+import com.example.kotrip.entity.city.City;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -24,9 +24,6 @@ public class HotelInfo {
     @ManyToOne
     @JoinColumn(name = "city_id")
     public City city;
-
-    @OneToOne(mappedBy = "hotelInfo")
-    public Hotel hotel;
 
     public String addr1;
 

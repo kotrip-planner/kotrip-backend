@@ -1,7 +1,7 @@
-package com.example.kotrip.entity.tourlist;
+package com.example.kotrip.entity.city;
 
-import com.example.kotrip.entity.tourlist.hotel.HotelInfo;
-import com.example.kotrip.entity.tourlist.tour.TourInfo;
+import com.example.kotrip.entity.hotel.HotelInfo;
+import com.example.kotrip.entity.tour.TourInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

@@ -8,7 +8,7 @@ import com.example.kotrip.dto.schedule.response.ScheduleTourResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleToursResponseDto;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
-import com.example.kotrip.entity.tourlist.City;
+import com.example.kotrip.entity.city.City;
 import com.example.kotrip.entity.user.User;
 import com.example.kotrip.repository.city.CityRepository;
 import com.example.kotrip.repository.schedule.ScheduleRepository;
@@ -18,7 +18,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -86,6 +85,8 @@ public class HistoryService {
         // uuid에 맞는 스케줄 가져오기
         List<Schedule> schedules = scheduleRepository.findSchedulesByClassificationIdOrderByTime(uuid).orElseThrow(() -> new IllegalArgumentException("스케줄이 존재하지 않습니다."));
 
+        String title = schedules.get(0).getTitle();
+
         int areaId = schedules.get(0).getAreaId();
         City city = cityRepository.findById(areaId).orElseThrow(() -> new IllegalArgumentException("도시가 존재하지 않습니다."));
 
@@ -118,6 +119,7 @@ public class HistoryService {
         log.info("{}", scheduleToursResponseDto);
 
         return ScheduleEachResponseDto.builder()
+                .title(title)
                 .schedule(scheduleToursResponseDtos)
                 .city(city.getTitle())
                 .uuid(uuid)

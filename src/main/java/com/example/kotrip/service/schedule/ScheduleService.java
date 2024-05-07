@@ -52,7 +52,8 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto) {
 
-        Mono<List<List<Integer>>> drivingResult = optimalDurationService.getDriving(naverRequestDto);
+        List<List<Integer>> driving = optimalDurationService.getDriving(naverRequestDto).block();
+        Mono<List<List<Integer>>> drivingResult = optimalDurationService.getOptimalRoute(naverRequestDto, driving);
 
         Authentication authentication = getAuthentication();
 
@@ -62,6 +63,7 @@ public class ScheduleService {
         // 데이터 저장
 
         String scheduleUuid = ClassificationId.getID();
+        String title = naverRequestDto.getTitle();
         List<List<Integer>> result = drivingResult.block();
 
         LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
@@ -88,7 +90,7 @@ public class ScheduleService {
                 localDate = localDate.plusDays(1);
             }
 
-            Schedule schedule = Schedule.toEntity(scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours, ClassificationId.getID());
+            Schedule schedule = Schedule.toEntity(title, scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours, ClassificationId.getID());
             schedules.add(schedule);
 
             for (int j = 0; j < schedule.getTours().size(); j++) {
