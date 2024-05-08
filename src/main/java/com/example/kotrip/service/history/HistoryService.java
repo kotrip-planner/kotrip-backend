@@ -61,7 +61,7 @@ public class HistoryService {
             LocalDate endDate = list.get(list.size()-1).getTime();
             int areaId = list.get(0).getAreaId();
 
-            City city = cityRepository.findById(areaId).orElseThrow(() -> new IllegalArgumentException("지역에 맞는 도시를 찾을 수 없습니다."));
+            City city = cityRepository.findByCityId(areaId).orElseThrow(() -> new IllegalArgumentException("지역에 맞는 도시를 찾을 수 없습니다."));
 
             historyEachResponseDtos.add(
                     HistoryEachResponseDto
@@ -88,7 +88,7 @@ public class HistoryService {
         String title = schedules.get(0).getTitle();
 
         int areaId = schedules.get(0).getAreaId();
-        City city = cityRepository.findById(areaId).orElseThrow(() -> new IllegalArgumentException("도시가 존재하지 않습니다."));
+        City city = cityRepository.findByCityId(areaId).orElseThrow(() -> new IllegalArgumentException("도시가 존재하지 않습니다."));
 
         ScheduleToursResponseDto scheduleToursResponseDto = null;
         List<ScheduleToursResponseDto> scheduleToursResponseDtos = new ArrayList<>();

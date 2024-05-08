@@ -1,26 +1,19 @@
 package com.example.kotrip.repository.city;
 
+import com.example.kotrip.dto.city.CityResponseDto;
 import com.example.kotrip.entity.city.City;
-import jakarta.persistence.EntityManager;
-import java.util.List;
-import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+
 @Repository
-@RequiredArgsConstructor
-public class CityRepository {
-    private final EntityManager em;
+public interface CityRepository extends JpaRepository<City, Long> {
+    @Query("select new com.example.kotrip.dto.city.CityResponseDto(c) from City c")
+    List<CityResponseDto> findDtoAll();
 
-    public List<City> findAll() {
-
-        return em.createQuery("select c from City c", City.class)
-                .getResultList();
-    }
-
-    public Optional<City> findById(final int id){
-        return Optional.of(em.createQuery("select c from City c where cityId = :id", City.class)
-                .setParameter("id",id)
-                .getSingleResult());
-    }
+    // City id 필드명과 동일해야 함
+    Optional<City> findByCityId(int cityId);
 }
