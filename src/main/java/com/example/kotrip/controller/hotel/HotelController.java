@@ -20,8 +20,13 @@ public class HotelController {
     private final HotelSearchService hotelService;
 
     @GetMapping("/hotelSearch")
-    public ApiResponse<List<HotelSearchDto>> hotelSearch(@RequestParam BigDecimal mapX, @RequestParam BigDecimal mapY) {
-        List<HotelSearchDto> hotelSearchDtoList = hotelService.dtoTrans(mapX, mapY);
+    public ApiResponse<List<HotelSearchDto>> hotelSearch(@RequestParam BigDecimal mapAX, @RequestParam BigDecimal mapAY, @RequestParam BigDecimal mapBX, @RequestParam BigDecimal mapBY) {
+        Double mapaX = mapAX.doubleValue();
+        Double mapaY = mapAY.doubleValue();
+        Double mapbX = mapBX.doubleValue();
+        Double mapbY = mapBY.doubleValue();
+
+        List<HotelSearchDto> hotelSearchDtoList = hotelService.dtoTrans(mapaX, mapaY, mapbX, mapbY);
         return new ApiResponse<>(HttpStatus.OK, "Success", hotelSearchDtoList);
     }
 }

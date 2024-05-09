@@ -15,7 +15,8 @@ public interface HotelRepository extends JpaRepository<HotelInfo, Long> {
             " point(map_x, map_y)," +
             " point(:mapX, :mapY)) AS distance" +
             " FROM hotelinfo" +
-            " HAVING distance <= 5000" +
+            " HAVING distance <= :radius" + // default : m 단위
             " ORDER BY distance ASC;", nativeQuery = true)
-    List<HotelSearchInterface> findHotelByCircle(@Param("mapX") BigDecimal mapX, @Param("mapY") BigDecimal mapY);
+    List<HotelSearchInterface> findHotelByCircle(Double mapX, Double mapY, Double radius);
+
 }

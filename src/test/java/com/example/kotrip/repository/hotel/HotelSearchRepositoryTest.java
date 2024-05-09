@@ -21,12 +21,21 @@ class HotelSearchRepositoryTest {
 
     @Test
     public void HotelSearch() {
-        BigDecimal mapX = new BigDecimal(129.1287274000);
-        BigDecimal mapY = new BigDecimal(35.1576878100);
+        /** given */
+        Double mapAX = 129.1287274000; // 호텔런더너
+        Double mapAY = 35.1576878100;
 
-        List<HotelSearchDto> hotelInfoDtos = hotelService.dtoTrans(mapX, mapY);
+        Double mapBX = 129.1451010000; // 한화리조트 해운대
+        Double mapBY = 35.1544884700;
+
+        /** when */
+        List<HotelSearchDto> hotelInfoDtos = hotelService.dtoTrans(mapAX, mapAY, mapBX, mapBY);
+        System.out.println("hotelInfoDtos.size() = " + hotelInfoDtos.size());
+
+        /** then */
         for (HotelSearchDto hotel : hotelInfoDtos) {
-            Assertions.assertThat(hotel.distance).isLessThan(5000);
+            Assertions.assertThat(hotel.distance).isLessThan(10000); // 10km
+            System.out.println("hotel.getTitle() = " + hotel.getTitle());
         }
     }
 }
