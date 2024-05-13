@@ -1,10 +1,12 @@
 package com.example.kotrip.dto.tour;
 
 import java.math.BigDecimal;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
+@Builder
 public class TourInfoDto {
 
     private int id;

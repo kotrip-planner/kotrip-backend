@@ -13,8 +13,6 @@ public interface TourRepository extends JpaRepository<TourInfo, Long> {
     @Query("select new com.example.kotrip.dto.tour.TourInfoDto(t.id,t.title, t.imageUrl1, t.addr1, t.mapX, t.mapY) from TourInfo t where t.city.cityId = :cityId")
     List<TourInfoDto> findTourInfoByCityId(@Param("cityId") Integer cityIds);
 
-    Optional<TourInfo> findTourInfoById(int id);
-
     @Query("select new com.example.kotrip.dto.tour.TourInfoDto(t.id,t.title, t.imageUrl1, t.addr1, t.mapX, t.mapY) from TourInfo t")
     List<TourInfoDto> ex();
 

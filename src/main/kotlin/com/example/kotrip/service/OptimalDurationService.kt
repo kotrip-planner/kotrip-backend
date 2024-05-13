@@ -78,6 +78,8 @@ class OptimalDurationService {
                 Array(list.size) { LongArray(list.size) { 0 } }
             }
 
+
+            print(sortedResultList)
             // 맵 리스트를 순회하면서 결과 이중 리스트를 채움
             for (map in sortedResultList) {
                 for ((key, value) in map) {
@@ -133,6 +135,8 @@ class OptimalDurationService {
      *     example) [[1,2,3],[4,5,6],[7,8,9]...]
      */
     fun getOptimalRoute(naverRequestDto: NaverRequestDto, optimalTourList:List<List<Int>>): Mono<List<List<Int>>> {
+        print("optimalTourList ${optimalTourList}")
+
         val httpClient: HttpClient = HttpClient.create()
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10_000)
             .responseTimeout(Duration.ofMillis(10_000))
@@ -169,7 +173,8 @@ class OptimalDurationService {
         return responseMapList.map { sortedResultList ->
             // 결과 리스트 처리 로직
             val data = groupPathsByDay(sortedResultList)
-            println(data)
+            println("data ${data}")
+            println("sortedResultList ${sortedResultList}")
 
             /**
              * {1=[{1-2=1-5=1255}, ...] 1일차에서 2일차로 가는 경로들 가져오기
@@ -187,12 +192,14 @@ class OptimalDurationService {
                 // List<Map<String, Long>>에서 최소 Long 값을 가진 Map 항목 찾기
                 val minEntry = it.minByOrNull { map -> map.values.first() }
 
+                println("minEntry : ${minEntry}")
                 /**
                  * 1-2=1-5=12355 (1일차에서 2일차로 가는 경로에서 1일차 관광지 1과 2일차 관광지 5의 경로 시간이 12355ms 이다.
                  * 1-5 부분 가져오기
                  */
                 val keyPart = minEntry?.keys?.first()?.split("=")?.get(1) ?: ""
 
+                println("keyPart : ${keyPart}")
                 /**
                  * 1-5 에서  - 분할
                  * 1일차 목적지 -> 1
@@ -209,15 +216,18 @@ class OptimalDurationService {
                 val currentTourList = turnRightIndex(optimalTourList, start)
                 tourList.add(currentTourList)
 
+                println("currentTourList : $currentTourList")
+
                 /**
                  * [2,1,3] 에서 1이 출발지 이면 <- 이동
                  * [1,3,2] 만들기
                  */
                 val nextTourList = turnLeftIndex(optimalTourList, end)
                 tourList.add(nextTourList)
+                println("nextTourList : $nextTourList")
             }
 
-            println(tourList)
+            println("tourList : ${tourList}")
 
 
             /**
@@ -255,6 +265,8 @@ class OptimalDurationService {
                     tourList.add(tripList)
                 }
             }
+
+            println("result tourList : $tourList")
 
             tourList
         }
