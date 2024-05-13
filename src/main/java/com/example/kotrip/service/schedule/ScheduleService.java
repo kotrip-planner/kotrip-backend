@@ -174,7 +174,7 @@ public class ScheduleService {
         }
 
         for(String key : map.keySet()) {
-            City city = cityRepository.findById(map.get(key).get(0).getAreaId())
+            City city = cityRepository.findById((long) map.get(key).get(0).getAreaId())
                     .orElseThrow(() -> new IllegalArgumentException("도시가 존재하지 않는다."));
             scheduleEachResponseDtos.add(ScheduleEachResponseDto.builder().title(map.get(key).get(0).getTitle()).city(city.title).uuid(key).schedule(map.get(key)).build());
         }
