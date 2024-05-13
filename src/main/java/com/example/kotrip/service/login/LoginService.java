@@ -18,10 +18,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
@@ -31,8 +39,10 @@ public class LoginService {
     private static final String REQUEST_URL = "https://kauth.kakao.com/oauth/token";
     private static final String KAKAO_TOKEN_VALID_URL = "https://kapi.kakao.com/v1/user/access_token_info";
     private static final String POST_URL = "https://kapi.kakao.com/v2/user/me";
+    private static final String LOGOUT_URL = "https://kapi.kakao.com/v1/user/unlink";
     private static final String REST_API_KEY = "fa498bcb6460766a009c3d798e9ac960";
     private static final String CLIENT_SECRET = "lEB0s7oBeim5d2Y4UnEBH2Owa9n32VZs";
+    private static final String ADMIN_KEY = "8b891e240e4f39f48c6ee9ecb23c162e";
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -49,6 +59,24 @@ public class LoginService {
         String newRefreshToken = jwtTokenProvider.createRefreshToken(nickname,kakaoId);
 
         return ReissueResponseDto.of(accessToken, newRefreshToken);
+    }
+
+    public String logout() {
+        Authentication authentication = getAuthentication();
+        String kakaoUserId = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다.")).getKakaoUserId();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+        headers.add("Authorization", "KakaoAK " + ADMIN_KEY);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        String body = "target_id_type=user_id&target_id=" + kakaoUserId;
+
+        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(LOGOUT_URL, entity, String.class);
+        return response.getBody();
     }
 
     public LoginResponseDto login(String token) {
@@ -121,8 +149,6 @@ public class LoginService {
 
             conn.setRequestProperty("Authorization", "Bearer " + accessToken);
 
-            int responseCode = conn.getResponseCode();
-
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
             String line = "";
@@ -145,5 +171,9 @@ public class LoginService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 }

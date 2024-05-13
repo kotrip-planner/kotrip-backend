@@ -9,6 +9,7 @@ import com.example.kotrip.service.login.LoginService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/api")
-public class    LoginController {
+public class LoginController {
 
     private final LoginService loginService;
 
@@ -30,5 +31,10 @@ public class    LoginController {
     @PostMapping("/reissue")
     public ApiResponse<ReissueResponseDto> reissue(@Valid @RequestBody ReissueRequestDto reissueRequestDto) {
         return ApiResponse.ok(loginService.reissue(reissueRequestDto));
+    }
+
+    @GetMapping("/logout")
+    public ApiResponse<String> logout() {
+        return ApiResponse.ok(loginService.logout());
     }
 }
