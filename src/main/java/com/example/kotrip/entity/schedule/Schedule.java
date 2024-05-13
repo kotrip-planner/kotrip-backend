@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +22,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @AllArgsConstructor
+@Data
 public class Schedule {
 
     @Id
@@ -43,7 +45,7 @@ public class Schedule {
     List<ScheduleTour> tours = new ArrayList<>();
 
 
-    public static Schedule toEntity(String title, String classificationId, int areaId, LocalDate time, User user,List<ScheduleTour> tours, String id) {
+    public static Schedule toEntity(String title, String classificationId, int areaId, LocalDate time, User user, List<ScheduleTour> tours, String id) {
         return Schedule.builder()
                 .title(title)
                 .classificationId(classificationId)

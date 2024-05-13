@@ -60,6 +60,7 @@ public class HistoryService {
             LocalDate startDate = list.get(0).getTime();
             LocalDate endDate = list.get(list.size()-1).getTime();
             int areaId = list.get(0).getAreaId();
+            String title = list.get(0).getTitle();
 
             City city = cityRepository.findByCityId(areaId).orElseThrow(() -> new IllegalArgumentException("지역에 맞는 도시를 찾을 수 없습니다."));
 
@@ -69,7 +70,7 @@ public class HistoryService {
                             .startDate(startDate)
                             .endDate(endDate)
                             .uuid(key)
-                            .title(city.title)
+                            .title(title)
                             .imageUrl(city.imageUrl)
                             .build()
             );

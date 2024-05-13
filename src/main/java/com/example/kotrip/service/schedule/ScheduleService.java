@@ -6,11 +6,13 @@ import com.example.kotrip.dto.schedule.response.ScheduleTourResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleToursResponseDto;
 import com.example.kotrip.dto.schedule.response.SchedulesResponseDto;
 import com.example.kotrip.dto.tour.TourInfoDto;
+import com.example.kotrip.entity.city.City;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
 import com.example.kotrip.entity.user.User;
 import com.example.kotrip.naver.NaverRequestDto;
 import com.example.kotrip.naver.OptimalDurationService;
+import com.example.kotrip.repository.city.CityRepository;
 import com.example.kotrip.repository.schedule.ScheduleJdbcRepository;
 import com.example.kotrip.repository.schedule.ScheduleRepository;
 import com.example.kotrip.repository.scheduleTour.ScheduleTourJdbcRepository;
@@ -46,6 +48,7 @@ public class ScheduleService {
     private final ScheduleJdbcRepository scheduleJdbcRepository;
     private final ScheduleTourRepository scheduleTourRepository;
     private final ScheduleTourJdbcRepository scheduleTourJdbcRepository;
+    private final CityRepository cityRepository;
     private final TourRepository tourRepository;
 
     // 일차별 스케줄을 생성하는 api
@@ -80,7 +83,6 @@ public class ScheduleService {
         String title = naverRequestDto.getTitle();
         List<List<Integer>> result = drivingResult.block();
 
-
         LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
         List<Schedule> schedules = new ArrayList<>();
         List<ScheduleTour> scheduleTours = new ArrayList<>();
@@ -88,8 +90,6 @@ public class ScheduleService {
 
         // DB에 저장 - User에 맞게
         for (int i = 0; i < result.size(); i++) {
-
-
             List<ScheduleTour> tours = new ArrayList<>(); // n일차 관광지 리스트
             for (int j = 0; j < result.get(i).size(); j++) {
                 int tourId = result.get(i).get(j); // 각 관광지 id
@@ -101,7 +101,7 @@ public class ScheduleService {
                 TourInfoDto tourInfoDto = tourRepository.findByTourid(tourId); // 관광지 id로 TourInfoDto 가져오기
                 tourInfoDtos.add(tourInfoDto);
             }
-
+          
             tourIds.clear();
 
             // List<ScheduleTour> tours
@@ -126,6 +126,10 @@ public class ScheduleService {
             }
 
         }
+
+
+        System.out.println("schedule : " + schedules.get(0).toString());
+        System.out.println("scheduleTours : " + scheduleTours.get(0).toString());
 
         // 쿼리 한번에 날리기 - bulk insert
         scheduleJdbcRepository.saveAll(schedules);
@@ -152,6 +156,8 @@ public class ScheduleService {
         for(Schedule schedule: schedules) { // 스케줄 전부 가져요기
 
             String classificationId = schedule.getClassificationId();
+            String title = schedule.getTitle();
+            Integer areaId = schedule.getAreaId();
 
             if(!classificationId.equals(first)) {
                 scheduleToursResponseDtos = new ArrayList<>(); // 초기화
@@ -162,13 +168,15 @@ public class ScheduleService {
                     .stream().map(tour -> ScheduleTourResponseDto.builder().id(tour.getId()).title(tour.getTitle()).imageUrl(tour.getImageUrl()).mapX(tour.getMapX()).mapY(tour.getMapY()).build()).collect(
                             Collectors.toList());
 
-            scheduleToursResponseDtos.add(ScheduleToursResponseDto.builder().tours(tours).date(schedule.getTime()).build());
+            scheduleToursResponseDtos.add(ScheduleToursResponseDto.builder().title(title).areaId(areaId).tours(tours).date(schedule.getTime()).build());
 
             map.put(classificationId, scheduleToursResponseDtos);
         }
 
         for(String key : map.keySet()) {
-            scheduleEachResponseDtos.add(ScheduleEachResponseDto.builder().uuid(key).schedule(map.get(key)).build());
+            City city = cityRepository.findById(map.get(key).get(0).getAreaId())
+                    .orElseThrow(() -> new IllegalArgumentException("도시가 존재하지 않는다."));
+            scheduleEachResponseDtos.add(ScheduleEachResponseDto.builder().title(map.get(key).get(0).getTitle()).city(city.title).uuid(key).schedule(map.get(key)).build());
         }
 
         log.info("schedulesTourResponseDtos : {}", scheduleToursResponseDtos);
