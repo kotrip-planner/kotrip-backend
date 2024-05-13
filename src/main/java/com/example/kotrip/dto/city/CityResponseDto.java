@@ -1,12 +1,15 @@
 package com.example.kotrip.dto.city;
 
 import com.example.kotrip.entity.city.City;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
 public class CityResponseDto {
     public int areaId;
+
     public String title;
     public String imageUrl;
     public double mapX;

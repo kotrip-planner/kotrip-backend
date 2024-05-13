@@ -1,4 +1,4 @@
-package com.example.kotrip.controller;
+package com.example.kotrip.controller.city;
 
 import com.example.kotrip.dto.city.CityResponseDto;
 import com.example.kotrip.dto.common.ApiResponse;
@@ -18,10 +18,7 @@ public class CityController {
 
     @GetMapping("/city")
     public ApiResponse<List<CityResponseDto>> cityList() {
-        List<City> cities = cityRepository.findAll();
-        List<CityResponseDto> cityDtoList = cities.stream()
-                .map(o -> new CityResponseDto(o))
-                .collect(Collectors.toList());
-        return new ApiResponse<>(HttpStatus.OK, "Success", cityDtoList);
+        List<CityResponseDto> cities = cityRepository.findDtoAll();
+        return new ApiResponse<>(HttpStatus.OK, "Success", cities);
     }
 }

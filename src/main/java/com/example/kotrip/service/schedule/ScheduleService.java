@@ -55,22 +55,33 @@ public class ScheduleService {
     @Transactional
     public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto) {
 
+        /**
+         * 1. 비동기 api 호출을 위해, kotlin 으로 최적 경로 리스트를 추출한다.
+         * 2. 결과값에서 각 관광지 id에 따른 TourInfo 데이터를 이용해, ScheduleTour(n일차의 모든 관광지)를 생성한다. (List<ScheduleTour>)
+         * 3. 그렇게 각 일차의 ScheduleTour 정보로 Schedule(n일차)를 생성한다.
+         * 4. ScheduleTour - Schedule / Schedule - User 연관관계에 맞추어 파라미터에 set() 데이터를 채운다.
+         * 5. 벌크 쿼리로 DB에 반영한다.
+         */
+
+        // 관광지 TSP 순회 리스트
+        // example : [[1,2,3,4,1], [5,6,7,8,5] ...]
         List<List<Integer>> driving = optimalDurationService.getDriving(naverRequestDto).block();
-        log.info("driving : {}", driving.get(0).get(0));
+
+        // 최소경로를 이용한 최적 경로 리스트
+        // example : [[1,2,3],[4,5,6],[7,8,9]...]
         Mono<List<List<Integer>>> drivingResult = optimalDurationService.getOptimalRoute(naverRequestDto, driving);
 
         Authentication authentication = getAuthentication();
 
+        // 유저 조회
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
+
 
         // 관광지 순서 지정 알고리즘 + 숙소 추천 알고리즘
         // 데이터 저장
-
         String scheduleUuid = ClassificationId.getID();
         String title = naverRequestDto.getTitle();
         List<List<Integer>> result = drivingResult.block();
-
-        System.out.println("result : " + result);
 
         LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate();
         List<Schedule> schedules = new ArrayList<>();
@@ -79,19 +90,24 @@ public class ScheduleService {
 
         // DB에 저장 - User에 맞게
         for (int i = 0; i < result.size(); i++) {
-            System.out.println(i);
-            List<ScheduleTour> tours = new ArrayList<>();
+            List<ScheduleTour> tours = new ArrayList<>(); // n일차 관광지 리스트
             for (int j = 0; j < result.get(i).size(); j++) {
-                int tourId = result.get(i).get(j);
+                int tourId = result.get(i).get(j); // 각 관광지 id
                 tourIds.add(tourId);
             }
 
-            System.out.println("tourIds : " + tourIds);
-
-            List<TourInfoDto> tourInfos = tourRepository.findByIdIn(tourIds);
+            List<TourInfoDto> tourInfoDtos = new ArrayList<>(); // n일차 관광지 투어 정보
+            for (Integer tourId : tourIds) {
+                TourInfoDto tourInfoDto = tourRepository.findByTourid(tourId); // 관광지 id로 TourInfoDto 가져오기
+                tourInfoDtos.add(tourInfoDto);
+            }
+          
             tourIds.clear();
-            for(TourInfoDto tourInfo : tourInfos) {
-                tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L,tourInfo.getImageUrl(), tourInfo.getMapY(), tourInfo.getMapX(),null));
+
+            // List<ScheduleTour> tours
+            // 사용자가 선택한 TourInfoDto로, DB에 들어갈 ScheduleTour을 생성한다. (스케줄을 그대로 가져오기 위함)
+            for(TourInfoDto tourInfo : tourInfoDtos) {
+                tours.add(ScheduleTour.toEntity((long) tourInfo.getId(), tourInfo.getTitle(),0L, tourInfo.getImageUrl(), tourInfo.getMapY(), tourInfo.getMapX(),null));
             }
 
             // schedule과 id를 묶어주어야 함
@@ -99,9 +115,11 @@ public class ScheduleService {
                 localDate = localDate.plusDays(1);
             }
 
+            // 사용자, 생성한 ScheduleTour List와 localDate 등으로 Schedule을 생성한다.
             Schedule schedule = Schedule.toEntity(title, scheduleUuid, naverRequestDto.getAreaId(), localDate, user, tours, ClassificationId.getID());
-            schedules.add(schedule);
+            schedules.add(schedule); //
 
+            // ScheduleTour에 Schedule을 부여해 묶어준다.
             for (int j = 0; j < schedule.getTours().size(); j++) {
                 ScheduleTour scheduleTour = tours.get(j).setSchedule(schedule);
                 scheduleTours.add(scheduleTour);
