@@ -25,7 +25,7 @@ public class ScheduleTourJdbcRepository {
                     ps.setString(4,st.getMapY().toString());
                     ps.setString(5,st.getSchedule().getId().toString());
                     ps.setString(6,st.getTitle());
-                    ps.setString(7,st.getId().toString());
+                    ps.setString(7,st.getTourId().toString());
                 });
     }
 }

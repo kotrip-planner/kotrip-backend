@@ -9,6 +9,7 @@ import com.example.kotrip.service.login.LoginService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,5 +37,10 @@ public class LoginController {
     @GetMapping("/logout")
     public ApiResponse<String> logout() {
         return ApiResponse.ok(loginService.logout());
+    }
+
+    @DeleteMapping("/withdrawal")
+    public ApiResponse<String> withdrawal() {
+        return ApiResponse.ok(loginService.withdrawl());
     }
 }

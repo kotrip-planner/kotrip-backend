@@ -3,6 +3,7 @@ package com.example.kotrip.entity.user;
 import com.example.kotrip.constants.Authority;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -39,7 +40,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Authority authority;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Schedule> schedules = new ArrayList<>();
 
     public static User create(String kakaoUserId, String nickname) {

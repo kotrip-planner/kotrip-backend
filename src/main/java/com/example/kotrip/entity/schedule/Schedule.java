@@ -1,6 +1,7 @@
 package com.example.kotrip.entity.schedule;
 
 import com.example.kotrip.entity.user.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -41,7 +42,7 @@ public class Schedule {
     @JoinColumn(name = "user_id")
     User user;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "schedule", cascade = CascadeType.REMOVE)
     List<ScheduleTour> tours = new ArrayList<>();
 
 

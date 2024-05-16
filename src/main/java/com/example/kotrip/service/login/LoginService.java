@@ -3,22 +3,23 @@ package com.example.kotrip.service.login;
 import com.example.kotrip.dto.login.response.LoginResponseDto;
 import com.example.kotrip.dto.reissue.request.ReissueRequestDto;
 import com.example.kotrip.dto.reissue.response.ReissueResponseDto;
+import com.example.kotrip.entity.schedule.Schedule;
+import com.example.kotrip.entity.schedule.ScheduleTour;
 import com.example.kotrip.entity.user.User;
 import com.example.kotrip.jwt.JwtTokenProvider;
+import com.example.kotrip.repository.schedule.ScheduleRepository;
+import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
 import com.example.kotrip.repository.user.UserRepository;
 import com.nimbusds.jose.shaded.gson.JsonElement;
 import com.nimbusds.jose.shaded.gson.JsonObject;
 import com.nimbusds.jose.shaded.gson.JsonParser;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 @Slf4j
@@ -46,6 +48,8 @@ public class LoginService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ScheduleRepository scheduleRepository;
+    private final ScheduleTourRepository scheduleTourRepository;
 
     public ReissueResponseDto reissue(ReissueRequestDto reissueRequestDto) {
 
@@ -59,6 +63,26 @@ public class LoginService {
         String newRefreshToken = jwtTokenProvider.createRefreshToken(nickname,kakaoId);
 
         return ReissueResponseDto.of(accessToken, newRefreshToken);
+    }
+
+    @Transactional
+    public String withdrawl() {
+        Authentication authentication = getAuthentication();
+        User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
+        userRepository.delete(user); // 계정 삭제
+
+        String kakaoUserId = user.getKakaoUserId();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/x-www-form-urlencoded");
+        headers.add("Authorization", "KakaoAK " + ADMIN_KEY);
+
+        RestTemplate restTemplate = new RestTemplate();
+        String body = "target_id_type=user_id&target_id=" + kakaoUserId;
+        HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(LOGOUT_URL, entity, String.class);
+        return response.getBody();
     }
 
     public String logout() {
