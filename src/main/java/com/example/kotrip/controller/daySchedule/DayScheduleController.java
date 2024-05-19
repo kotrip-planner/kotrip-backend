@@ -3,7 +3,7 @@ package com.example.kotrip.controller.daySchedule;
 import com.example.kotrip.dto.common.ApiResponse;
 import com.example.kotrip.dto.daytrip.NaverRequestDto;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
-import com.example.kotrip.service.daySchedule.DayTripService;
+import com.example.kotrip.service.schedule_day.DayTripService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

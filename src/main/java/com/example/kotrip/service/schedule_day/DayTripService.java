@@ -1,5 +1,4 @@
-package com.example.kotrip.service.daySchedule;
-
+package com.example.kotrip.service.schedule_day;
 
 import com.example.kotrip.dto.daytrip.NaverRequestDto;
 import com.example.kotrip.dto.daytrip.Node;
@@ -47,7 +46,7 @@ public class DayTripService {
          * ScheduleTours 정의 (각 관광지들)
          */
         Map<Long, Boolean> visited = new HashMap<>();
-        List<Node> nodes = naverRequestDto.getKotrip().getNodes(); // 각 관광지들
+        List<Node> nodes = naverRequestDto.getKotrip().get(0).getNodes(); // 각 관광지들
 
         // 관광지 리스트 미방문 초기화
         for (Node node : nodes) {
@@ -64,7 +63,7 @@ public class DayTripService {
             /**
              * 현재 노드에서 가까운 노드 찾기
              */
-            Node nearNode = nearNodeService.getNearNode(start, visited);
+            Node nearNode = nearNodeService.getNearNode(start, nodes, visited);
             start = nearNode;
         }
 
@@ -83,7 +82,7 @@ public class DayTripService {
         String uuid = ClassificationId.getID();
         String uuid2 = ClassificationId.getID();
         Schedule schedule = Schedule.toEntity(naverRequestDto.getTitle(), uuid, naverRequestDto.getAreaId(),
-                naverRequestDto.getKotrip().getDate(), user, scheduleTours, uuid2);
+                naverRequestDto.getKotrip().get(0).getDate(), user, scheduleTours, uuid2);
         schedules.add(schedule);
 
 
