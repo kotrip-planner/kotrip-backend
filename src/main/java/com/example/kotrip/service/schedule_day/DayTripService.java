@@ -57,7 +57,7 @@ public class DayTripService {
         Node start = nodes.get(0);
         for (int i = 0; i < nodes.size(); ++i) {
             visited.put(start.getId(), true); // 방문 처리
-            scheduleTours.add(new ScheduleTour(start.getId(), start.getName(), 0L, start.getImageUrl(), start.getLongitude(), start.getLatitude(), null)); // 노드 정보로 ScheduleTour를 만든다.
+            scheduleTours.add(ScheduleTour.toEntity(start.getId(), start.getName(), 0L, start.getImageUrl(), start.getLongitude(), start.getLatitude(), null)); // 노드 정보로 ScheduleTour를 만든다.
 
             /**
              * 현재 노드에서 가까운 노드 찾기
