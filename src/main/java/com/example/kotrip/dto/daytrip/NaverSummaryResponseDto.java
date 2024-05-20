@@ -1,7 +1,10 @@
 package com.example.kotrip.dto.daytrip;
 
 public class NaverSummaryResponseDto {
-    private final NaverDurationResponseDto summary;
+    private NaverDurationResponseDto summary;
+
+    public NaverSummaryResponseDto(){
+    }
 
     public NaverSummaryResponseDto(NaverDurationResponseDto summary) {
         this.summary = summary;

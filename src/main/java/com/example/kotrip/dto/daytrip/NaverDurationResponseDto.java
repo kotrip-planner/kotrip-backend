@@ -1,13 +1,15 @@
 package com.example.kotrip.dto.daytrip;
 
+import lombok.Getter;
+
+@Getter
 public class NaverDurationResponseDto {
-    private final long duration;
+    private long duration;
+
+    protected NaverDurationResponseDto() {
+    }
 
     public NaverDurationResponseDto(long duration) {
         this.duration = duration;
-    }
-
-    public long getDuration() {
-        return duration;
     }
 }
