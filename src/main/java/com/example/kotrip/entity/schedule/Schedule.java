@@ -10,6 +10,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -38,6 +39,8 @@ public class Schedule {
 
     private String classificationId;
 
+    private LocalDateTime createdAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     User user;
@@ -50,6 +53,7 @@ public class Schedule {
         return Schedule.builder()
                 .title(title)
                 .classificationId(classificationId)
+                .createdAt(LocalDateTime.now())
                 .areaId(areaId)
                 .time(time)
                 .user(user)

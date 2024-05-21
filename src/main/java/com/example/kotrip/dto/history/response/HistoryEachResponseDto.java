@@ -1,6 +1,7 @@
 package com.example.kotrip.dto.history.response;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,4 +14,5 @@ public class HistoryEachResponseDto {
     private String imageUrl;
     private LocalDate startDate;
     private LocalDate endDate;
+    private LocalDateTime createdTime;
 }

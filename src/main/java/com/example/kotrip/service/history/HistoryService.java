@@ -15,6 +15,7 @@ import com.example.kotrip.repository.schedule.ScheduleRepository;
 import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
 import com.example.kotrip.repository.user.UserRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,6 +61,7 @@ public class HistoryService {
         for(String key: map.keySet()) {
             List<Schedule> list = map.get(key);
             LocalDate startDate = list.get(0).getTime();
+            LocalDateTime createdTime = list.get(0).getCreatedAt();
             LocalDate endDate = list.get(list.size()-1).getTime();
             int areaId = list.get(0).getAreaId();
             String title = list.get(0).getTitle();
@@ -71,8 +73,9 @@ public class HistoryService {
                             .builder()
                             .startDate(startDate)
                             .endDate(endDate)
+                            .createdTime(createdTime)
                             .uuid(key)
-                            .city(city.getTitle())
+                            .city(city.title)
                             .title(title)
                             .imageUrl(city.imageUrl)
                             .build()
@@ -84,7 +87,7 @@ public class HistoryService {
             @Override
             public int compare(HistoryEachResponseDto o1, HistoryEachResponseDto o2) {
 
-                return o2.getStartDate().compareTo(o1.getStartDate());
+                return o2.getCreatedTime().compareTo(o1.getCreatedTime());
             }
         });
 
