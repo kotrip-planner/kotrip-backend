@@ -16,6 +16,8 @@ import com.example.kotrip.repository.scheduleTour.ScheduleTourRepository;
 import com.example.kotrip.repository.user.UserRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +78,14 @@ public class HistoryService {
             );
 
         }
+
+        Collections.sort(historyEachResponseDtos, new Comparator<HistoryEachResponseDto>() {
+            @Override
+            public int compare(HistoryEachResponseDto o1, HistoryEachResponseDto o2) {
+
+                return o2.getStartDate().compareTo(o1.getStartDate());
+            }
+        });
 
         return HistoryResponseDto.builder().history(historyEachResponseDtos).build();
     }
