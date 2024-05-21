@@ -9,6 +9,7 @@ import lombok.Getter;
 public class HistoryEachResponseDto {
     private String uuid;
     private String title;
+    private String city;
     private String imageUrl;
     private LocalDate startDate;
     private LocalDate endDate;

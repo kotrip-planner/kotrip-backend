@@ -72,6 +72,7 @@ public class HistoryService {
                             .startDate(startDate)
                             .endDate(endDate)
                             .uuid(key)
+                            .city(city.getTitle())
                             .title(title)
                             .imageUrl(city.imageUrl)
                             .build()

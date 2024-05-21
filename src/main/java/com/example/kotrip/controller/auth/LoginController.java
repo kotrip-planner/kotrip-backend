@@ -34,11 +34,6 @@ public class LoginController {
         return ApiResponse.ok(loginService.reissue(reissueRequestDto));
     }
 
-    @GetMapping("/logout")
-    public ApiResponse<String> logout() {
-        return ApiResponse.ok(loginService.logout());
-    }
-
     @DeleteMapping("/withdrawal")
     public ApiResponse<String> withdrawal() {
         return ApiResponse.ok(loginService.withdrawl());

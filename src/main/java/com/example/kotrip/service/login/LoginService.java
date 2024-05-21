@@ -71,36 +71,7 @@ public class LoginService {
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
         userRepository.delete(user); // 계정 삭제
 
-        String kakaoUserId = user.getKakaoUserId();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/x-www-form-urlencoded");
-        headers.add("Authorization", "KakaoAK " + ADMIN_KEY);
-
-        RestTemplate restTemplate = new RestTemplate();
-        String body = "target_id_type=user_id&target_id=" + kakaoUserId;
-        HttpEntity<String> entity = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> response = restTemplate.postForEntity(LOGOUT_URL, entity, String.class);
-        return response.getBody();
-    }
-
-    public String logout() {
-        Authentication authentication = getAuthentication();
-        String kakaoUserId = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다.")).getKakaoUserId();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/x-www-form-urlencoded");
-        headers.add("Authorization", "KakaoAK " + ADMIN_KEY);
-
-        RestTemplate restTemplate = new RestTemplate();
-
-        String body = "target_id_type=user_id&target_id=" + kakaoUserId;
-
-        HttpEntity<String> entity = new HttpEntity<>(body, headers);
-
-        ResponseEntity<String> response = restTemplate.postForEntity(LOGOUT_URL, entity, String.class);
-        return response.getBody();
+        return "회원 탈퇴가 완료되었습니다.";
     }
 
     public LoginResponseDto login(String token) {
