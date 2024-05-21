@@ -6,12 +6,12 @@ import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 import com.example.kotrip.service.schedule_day.DayTripService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/day")
 public class DayScheduleController {
