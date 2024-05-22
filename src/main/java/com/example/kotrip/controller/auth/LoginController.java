@@ -36,6 +36,6 @@ public class LoginController {
 
     @DeleteMapping("/withdrawal")
     public ApiResponse<String> withdrawal() {
-        return ApiResponse.ok(loginService.withdrawl());
+        return ApiResponse.ok(loginService.withdrawal());
     }
 }

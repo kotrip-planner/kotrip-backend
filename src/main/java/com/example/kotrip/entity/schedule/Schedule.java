@@ -4,12 +4,14 @@ import com.example.kotrip.entity.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Builder
@@ -24,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @Data
+@EntityListeners(AuditingEntityListener.class)
 public class Schedule {
 
     @Id
@@ -37,6 +42,10 @@ public class Schedule {
     private LocalDate time;
 
     private String classificationId;
+
+    @CreatedDate
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

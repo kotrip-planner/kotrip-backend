@@ -4,7 +4,6 @@ import com.example.kotrip.dto.login.response.LoginResponseDto;
 import com.example.kotrip.dto.reissue.request.ReissueRequestDto;
 import com.example.kotrip.dto.reissue.response.ReissueResponseDto;
 import com.example.kotrip.entity.schedule.Schedule;
-import com.example.kotrip.entity.schedule.ScheduleTour;
 import com.example.kotrip.entity.user.User;
 import com.example.kotrip.jwt.JwtTokenProvider;
 import com.example.kotrip.repository.schedule.ScheduleRepository;
@@ -20,18 +19,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
@@ -66,9 +62,15 @@ public class LoginService {
     }
 
     @Transactional
-    public String withdrawl() {
+    public String withdrawal() {
         Authentication authentication = getAuthentication();
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
+        List<Schedule> schedules = scheduleRepository.findSchedulesByUserOrderByTime(user).orElseThrow(() -> new NoSuchElementException("스케줄이 존재하지 않습니다."));
+
+        for(Schedule schedule: schedules) {
+            scheduleTourRepository.deleteScheduleToursByScheduleId(schedule.getClassificationId());
+        }
+        scheduleRepository.deleteSchedulesByUser(user);
         userRepository.delete(user); // 계정 삭제
 
         return "회원 탈퇴가 완료되었습니다.";
