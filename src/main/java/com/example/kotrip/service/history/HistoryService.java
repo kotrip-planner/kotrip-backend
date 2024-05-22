@@ -87,7 +87,7 @@ public class HistoryService {
             @Override
             public int compare(HistoryEachResponseDto o1, HistoryEachResponseDto o2) {
 
-                return o1.getCreatedTime().compareTo(o2.getCreatedTime());
+                return o2.getCreatedTime().compareTo(o1.getCreatedTime());
             }
         });
 
