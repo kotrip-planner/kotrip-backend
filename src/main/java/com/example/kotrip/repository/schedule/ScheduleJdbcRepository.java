@@ -2,6 +2,7 @@ package com.example.kotrip.repository.schedule;
 
 import com.example.kotrip.entity.schedule.Schedule;
 import java.sql.PreparedStatement;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ public class ScheduleJdbcRepository {
 
     public void saveAll(List<Schedule> schedules) {
 
-        String sql = "INSERT INTO schedule (area_id, classification_id, time, user_id, schedule_id, title) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO schedule (area_id, classification_id, time, user_id, schedule_id, title, created_at) VALUES (?, ?, ?, ?, ?, ?,?)";
 
         log.info("schedules.size() = {}", schedules.size());
         jdbcTemplate.batchUpdate(sql, // bulk insert에 사용할 기본 쿼리
@@ -29,6 +30,7 @@ public class ScheduleJdbcRepository {
                     ps.setString(4, s.getUser().getUserId().toString());
                     ps.setString(5, s.getId());
                     ps.setString(6, s.getTitle());
+                    ps.setString(7, LocalDateTime.now().toString());
                 });
     }
 }

@@ -21,6 +21,7 @@ import com.example.kotrip.repository.tour.TourRepository;
 import com.example.kotrip.repository.user.UserRepository;
 import com.example.kotrip.util.classification.ClassificationId;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
