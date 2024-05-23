@@ -1,4 +1,4 @@
-package com.example.kotrip.service.schedule;
+package com.example.kotrip.service.schedule.multi_day_schedule;
 
 import com.example.kotrip.dto.schedule.response.ScheduleEachResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
@@ -10,7 +10,8 @@ import com.example.kotrip.entity.city.City;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
 import com.example.kotrip.entity.user.User;
-import com.example.kotrip.naver.NaverRequestDto;
+
+
 import com.example.kotrip.naver.OptimalDurationService;
 import com.example.kotrip.repository.city.CityRepository;
 import com.example.kotrip.repository.schedule.ScheduleJdbcRepository;
@@ -21,7 +22,6 @@ import com.example.kotrip.repository.tour.TourRepository;
 import com.example.kotrip.repository.user.UserRepository;
 import com.example.kotrip.util.classification.ClassificationId;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,15 +35,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+import com.example.kotrip.naver.NaverRequestDto;
+// import com.example.kotrip.dto.daytrip.request.NaverRequestDto;
+
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ScheduleService {
+public class AllDayTspScheduleService {
 
     private static final String SET_SCHEDULE_RESULT = "일정 저장이 완료";
 
     private final OptimalDurationService optimalDurationService;
-
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final ScheduleJdbcRepository scheduleJdbcRepository;
@@ -102,7 +105,7 @@ public class ScheduleService {
                 TourInfoDto tourInfoDto = tourRepository.findByTourid(tourId); // 관광지 id로 TourInfoDto 가져오기
                 tourInfoDtos.add(tourInfoDto);
             }
-          
+
             tourIds.clear();
 
             // List<ScheduleTour> tours
@@ -139,6 +142,7 @@ public class ScheduleService {
         // 최적 경로 만든 후 저장
         return new ScheduleResponseDto(scheduleUuid);
     }
+
 
     public SchedulesResponseDto getSchedule() { // 스케줄 가져오는 함수
         Authentication authentication = getAuthentication();

@@ -113,7 +113,7 @@ class OptimalDurationService {
             val resultList = mutableListOf<List<Int>>()
 
             idDoubleList.forEachIndexed { index, ints ->
-                val tsp = TspService(ints.size, results.get(index), ints.toTypedArray())
+                val tsp = ModifiyTspService(ints.size, results.get(index), ints.toTypedArray())
                 val start = 0
                 val bit = 1
                 val cost= tsp.printCost(start, bit)

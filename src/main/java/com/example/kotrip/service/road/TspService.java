@@ -1,34 +1,44 @@
 package com.example.kotrip.service.road;
 
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class TspService {
-    private static int N; // 노드의 수
-    private static long[][] graph; // 그래프
-    private static long[][] dp; // 동적 프로그래밍을 위한 배열
-    private static final long INF = 987654321; // 무한대
+    private Integer size; // 노드의 수
+    private Long[][] graph; // 그래프
+    private Long[] places;
+    private long[][] dp; // 동적 프로그래밍을 위한 배열
+    private long INF = 987654321; // 무한대
 
-    private static int start = 0;
-    private static int bit = 1;
-    private static HashMap<String, Integer> placeToIndex = new HashMap<>();
-    private static ArrayList<String> indexToPlace = new ArrayList<>();
-    private static ArrayList<String> path = new ArrayList<>();
+    private int start = 0;
+    private int bit = 1;
+    private HashMap<Long, Integer> placeToIndex = new HashMap<>();
+    private ArrayList<Long> indexToPlace = new ArrayList<>();
+    private ArrayList<Long> path = new ArrayList<>();
 
     // 생성자
-    public TspService(int size, long[][] graph, String[] places) {
-        N = size;
+    public TspService(Integer size, Long[][] graph, Long[] places) {
+        this.size = size;
         this.graph = graph;
+        this.places = places;
 
+        init();
+    }
+
+    private void init() {
         // dp[현재 노드][지금까지 방문한 노드] = 나머지 정점을 이동하고 출발 정점으로 돌아오는데 걸리는 최소 비용
-        dp = new long[N][1 << N];
-        for (int i = 0; i < N; i++) {
+        dp = new long[size][1 << size];
+        for (int i = 0; i < size; i++) {
             Arrays.fill(dp[i], 0);
         }
 
+        Long place = places[0];
+
         // bit-masking으로 탐색하기 위해 <관광지, number> 매핑
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < size; i++) {
             placeToIndex.put(places[i], i);
             indexToPlace.add(places[i]);
         }
@@ -41,9 +51,9 @@ public class TspService {
 
     public long dfs(int now, int visited) {
         // 모든 노드를 방문했을 시
-        if (visited == (1 << N) - 1) {
+        if (visited == (1 << size) - 1) {
             if (graph[now][start] != 0) // 시작점까지 가는 경로
-                return graph[now][start];
+                return 0;
             return INF; // 없으면 INF 값 반환
         }
 
@@ -53,7 +63,7 @@ public class TspService {
 
         // 노드 방문
         dp[now][visited] = INF; // 방문 표시, 길이 없어도 "if dp[now][visited] != 0"이 무한 재귀가 되지 않도록
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < size; i++) {
             if (graph[now][i] == 0)
                 continue;
 
@@ -71,11 +81,12 @@ public class TspService {
 
         return dp[now][visited];
     }
-    public ArrayList<String> printPath(int s, int visited) {
+    public ArrayList<Long> printPath(int s, int visited) {
+        
         // 경로에 number에 해당하는 관광지 추가
         path.add(indexToPlace.get(s));
 
-        if (visited == (1 << N) - 1) {
+        if (visited == (1 << size) - 1) {
             path.add(indexToPlace.get(start));
             return path;
         }
@@ -83,7 +94,7 @@ public class TspService {
         long nextCost = INF;
         int nextPath = 0;
 
-        for (int i = 0; i < N; ++i) {
+        for (int i = 0; i < size; ++i) {
             if ((visited & 1 << i) != 0)
                 continue;
 

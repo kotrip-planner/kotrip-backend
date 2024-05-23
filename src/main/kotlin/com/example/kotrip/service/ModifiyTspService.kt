@@ -4,7 +4,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class TspService(size: Int, private val graph: Array<LongArray>, places: Array<Int>) {
+class ModifiyTspService(size: Int, private val graph: Array<LongArray>, places: Array<Int>) {
     private var dp: Array<LongArray>
     private var path = ArrayList<Int>()
     private var placeToIndex = HashMap<Int, Int>()
@@ -29,7 +29,7 @@ class TspService(size: Int, private val graph: Array<LongArray>, places: Array<I
 
     private fun dfs(now: Int, visited: Int): Long {
         if (visited == (1 shl N) - 1) {
-            return if (graph[now][start] != 0L) graph[now][start] else INF
+            return if (graph[now][start] != 0L) 0 else INF
         }
         if (dp[now][visited] != 0L) return dp[now][visited]
 

@@ -1,6 +1,6 @@
-package com.example.kotrip.service.schedule_day;
+package com.example.kotrip.service.schedule.one_day_schedule;
 
-import com.example.kotrip.dto.daytrip.NaverResponseDto;
+import com.example.kotrip.dto.daytrip.response.NaverResponseDto;
 import com.example.kotrip.dto.daytrip.Node;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
@@ -44,19 +44,19 @@ public class NearNodeService {
         Flux<Node> nodesFlux = Flux.fromIterable(allNodes).filter(node -> !visited.get(node.getId()));
 
         List<Map<Long, Long>> nearDuration = nodesFlux.flatMap(node ->
-                        webClient.get()
-                                .uri(uriBuilder -> uriBuilder
-                                        .queryParam("start", start.getLongitude() + "," + start.getLatitude())
-                                        .queryParam("goal", node.getLongitude() + "," + node.getLatitude())
-                                        .queryParam("option", "trafast") // trafast API 요청
-                                        .build())
-                                .header("X-NCP-APIGW-API-KEY-ID", CLIENT_ID)
-                                .header("X-NCP-APIGW-API-KEY", CLIENT_SECRET)
-                                .retrieve()
-                                .bodyToMono(NaverResponseDto.class)
-                                .map(response -> {
-                                    return Map.of(node.getId(), response.getRoute().getTrafast().get(0).getSummary().getDuration());
-                                })
+                webClient.get()
+                        .uri(uriBuilder -> uriBuilder
+                                .queryParam("start", start.getLongitude() + "," + start.getLatitude())
+                                .queryParam("goal", node.getLongitude() + "," + node.getLatitude())
+                                .queryParam("option", "trafast") // trafast API 요청
+                                .build())
+                        .header("X-NCP-APIGW-API-KEY-ID", CLIENT_ID)
+                        .header("X-NCP-APIGW-API-KEY", CLIENT_SECRET)
+                        .retrieve()
+                        .bodyToMono(NaverResponseDto.class)
+                        .map(response -> {
+                            return Map.of(node.getId(), response.getRoute().getTrafast().get(0).getSummary().getDuration());
+                        })
         ).collectList().block();
 
 
