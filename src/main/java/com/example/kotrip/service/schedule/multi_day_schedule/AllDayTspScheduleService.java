@@ -5,7 +5,7 @@ import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleTourResponseDto;
 import com.example.kotrip.dto.schedule.response.ScheduleToursResponseDto;
 import com.example.kotrip.dto.schedule.response.SchedulesResponseDto;
-import com.example.kotrip.dto.tour.TourInfoDto;
+import com.example.kotrip.dto.tour.response.TourInfoDto;
 import com.example.kotrip.entity.city.City;
 import com.example.kotrip.entity.schedule.Schedule;
 import com.example.kotrip.entity.schedule.ScheduleTour;
