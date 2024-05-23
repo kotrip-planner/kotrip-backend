@@ -1,5 +1,6 @@
 package com.example.kotrip.jwt;
 
+import com.example.kotrip.repository.user.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -14,6 +15,7 @@ import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -28,6 +30,8 @@ public class JwtTokenProvider {
 
     private static long ACCESS_TOKEN_EXPIRED_TIME = 86400000L; // 1일
     private static long REFRESH_TOKEN_EXPIRED_TIME = 2592000000L; // 30일
+
+    private final UserRepository userRepository;
 
     private SecretKey key;
 
@@ -88,6 +92,9 @@ public class JwtTokenProvider {
     public void validateToken(String token) {
         try {
             Claims claims = Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getBody();
+            String nickname = getUsername(token);
+            userRepository.findUserByNickname(nickname).orElseThrow(() -> new UsernameNotFoundException("유저가 존재하지 않습니다."));
+
         }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("잘못된 JWT 서명입니다.");
         } catch (ExpiredJwtException e) {
