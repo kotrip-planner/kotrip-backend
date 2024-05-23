@@ -9,7 +9,7 @@ public class Node {
     private Long id;
     private String name;
     private String imageUrl;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private int time;
 }
