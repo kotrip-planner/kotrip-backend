@@ -5,6 +5,7 @@ import com.example.kotrip.dto.tour.TourInfoDto;
 import com.example.kotrip.repository.tour.TourRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,7 @@ public class TourController {
 
     @GetMapping("/tour")
     public ApiResponse<List<TourInfoDto>> tours(@RequestParam int cityId) {
-        List<TourInfoDto> tourInfoDtoList = tourRepository.findTourInfoByCityId(cityId);
+        List<TourInfoDto> tourInfoDtoList = tourRepository.findTourInfoByCityId(cityId, PageRequest.of(0, 20));
         return ApiResponse.ok(tourInfoDtoList);
     }
 }
