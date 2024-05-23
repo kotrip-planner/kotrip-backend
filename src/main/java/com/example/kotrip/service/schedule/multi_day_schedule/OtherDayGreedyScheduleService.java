@@ -115,6 +115,9 @@ public class OtherDayGreedyScheduleService {
                 }
 
 
+                if (j == nTrip.size()) { // nTrip.size() 만큼만 관광지를 저장해야 한다.
+                    break;
+                }
                 /**
                  * 현재 노드에서 가까운 노드 찾기
                  */
