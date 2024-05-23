@@ -1,4 +1,4 @@
-package com.example.kotrip.dto.daytrip;
+package com.example.kotrip.dto.daytrip.response;
 
 import lombok.Getter;
 import java.util.List;

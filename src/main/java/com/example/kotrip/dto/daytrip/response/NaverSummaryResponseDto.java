@@ -1,4 +1,4 @@
-package com.example.kotrip.dto.daytrip;
+package com.example.kotrip.dto.daytrip.response;
 
 public class NaverSummaryResponseDto {
     private NaverDurationResponseDto summary;

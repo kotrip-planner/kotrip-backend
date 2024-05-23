@@ -1,6 +1,6 @@
-package com.example.kotrip.service.schedule_day;
+package com.example.kotrip.service.schedule.one_day_schedule;
 
-import com.example.kotrip.dto.daytrip.NaverRequestDto;
+import com.example.kotrip.dto.daytrip.request.NaverRequestDto;
 import com.example.kotrip.dto.daytrip.Node;
 import com.example.kotrip.dto.schedule.response.ScheduleResponseDto;
 
@@ -24,11 +24,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class DayTripService {
+public class OneDayScheduleService {
     private final NearNodeService nearNodeService;
     private final UserRepository userRepository;
     private final ScheduleJdbcRepository scheduleJdbcRepository;
     private final ScheduleTourJdbcRepository scheduleTourJdbcRepository;
+
+
 
     public ScheduleResponseDto setSchedule(NaverRequestDto naverRequestDto) {
         /**
@@ -110,4 +112,5 @@ public class DayTripService {
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
+
 }

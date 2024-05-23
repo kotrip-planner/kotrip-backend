@@ -1,5 +1,6 @@
-package com.example.kotrip.dto.daytrip;
+package com.example.kotrip.dto.daytrip.request;
 
+import com.example.kotrip.dto.daytrip.Node;
 import lombok.Getter;
 
 import java.time.LocalDate;
