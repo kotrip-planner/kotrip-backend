@@ -53,6 +53,9 @@ dependencies {
 
     // Unable to load io.netty.resolver.dns.macos 에러
     runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.104.Final:osx-aarch_64'
+
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 }
 
 tasks.named('test') {
