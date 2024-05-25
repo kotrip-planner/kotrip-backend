@@ -40,6 +40,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
+        // 특정 endpoint들은 인증하지 않아도 접근할 수 있도록 한다.
         return (web) -> web.ignoring().requestMatchers(
                 "/api/login",
                 "/api/reissue",
@@ -47,7 +48,12 @@ public class SecurityConfig {
                 "/api/naver/driving",
                 "/city",
                 "/tour",
-                "/hotelSearch"
+                "/hotelSearch",
+
+                // swagger 문서 관련 리소스 (전부 열어주어야 함)
+                "/swagger-ui/**",
+                "/swagger-resources/**", // css, js, png ...
+                "/v3/api-docs/**"
         );
     }
 }
