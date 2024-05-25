@@ -21,16 +21,20 @@ import java.util.Map;
 
 @Service
 public class OneDayTspScheduleService {
+
+    // 네이버 지도 API, 발급받은 id와 password
     private static final String uriPath = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving";
     private static final String CLIENT_ID = "5x4xophd9r";
     private static final String CLIENT_SECRET = "iYRQwGRIZEmc8uAkxwkCTdrbUsOAZpTo5nNVik3g";
 
     // visited[True]인 곳은 api 거리 탐색 X
     public ArrayList<Long> getDriving(NaverRequestDto naverRequestDto) {
+        // 연결 및 응답 타임아웃 설정
         HttpClient httpClient = HttpClient.create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .responseTimeout(Duration.ofMillis(10000));
 
+        // 네이버 지도 Api 응답 타입을 JSON으로 받기를 원함
         WebClient webClient = WebClient
                 .builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
@@ -39,16 +43,8 @@ public class OneDayTspScheduleService {
                 .build();
 
 
-        // 1일차 노드들
+        // 1일차 관광지 노드 리스트
         List<Node> allNodes = naverRequestDto.getKotrip().get(0).getNodes();
-
-
-        // 관광지 id 리스트, DP 테이블 구하기 위함
-        List<Long> allNodeIndex = new ArrayList<>();
-        for (Node node : allNodes) {
-            allNodeIndex.add(node.getId());
-        }
-
         List<NewNode> newAllNodes = nodeSetGoal(allNodes);
 
 
@@ -71,7 +67,14 @@ public class OneDayTspScheduleService {
         ).collectList().block();
 
 
+        // 1일차 관광지 노드 id 리스트
+            // 각 관광지 id를 1 ~ N으로 매핑한다.
+        List<Long> allNodeIndex = new ArrayList<>();
+        for (Node node : allNodes) {
+            allNodeIndex.add(node.getId());
+        }
 
+        // TSP 관광지들 사이의 거리 테이블 구함.
         Long[][] dpMatrix = new Long[allNodes.size()][allNodes.size()];
         for (Map<String, Long> nodeDistance : nodeDistanceMatrix) {
             for (Map.Entry<String, Long> entry : nodeDistance.entrySet()) {
@@ -89,23 +92,22 @@ public class OneDayTspScheduleService {
             }
         }
 
-        Long[] nodes = allNodes.stream() // TSP 로직을 위한 node ID 배열 반환
+        // TSP 로직을 위한 node ID 배열 반환
+        Long[] nodes = allNodes.stream()
                 .map(node -> node.getId())
                 .toArray(Long[]::new);
 
+        // 1일차 Tsp 로직 실행
         TspService tspService = new TspService(dpMatrix.length, dpMatrix, nodes);
         ArrayList<Long> oneDayPaths = tspService.printPath(0, 1);
-
-        if (!oneDayPaths.isEmpty()) {
-            oneDayPaths.remove(oneDayPaths.size() - 1);
-        }
 
 
         return oneDayPaths;
     }
 
 
-    // 네이버 API를 호출할 때, 출발지-목적지가 같게 호출하지 않게끔 하기 위함.
+    // 네이버 API를 호출할 때, 출발지-목적지가 같게 호출이 되면 응답을 받지 못한다.
+    // 따라서 출발지-목적지를 설정한 NewNode 리스트를 만든다.
     private List<NewNode> nodeSetGoal(List<Node> allNodes) {
 
         List<NewNode> newAllNodes = new ArrayList<>();

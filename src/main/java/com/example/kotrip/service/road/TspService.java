@@ -87,7 +87,6 @@ public class TspService {
         path.add(indexToPlace.get(s));
 
         if (visited == (1 << size) - 1) {
-            path.add(indexToPlace.get(start));
             return path;
         }
 
