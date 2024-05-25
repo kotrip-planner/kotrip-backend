@@ -5,7 +5,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class HotelSearchDto {
+public class HotelSearch {
     public String addr1;
     public String addr2;
     public String imageUrl1;
@@ -20,7 +20,7 @@ public class HotelSearchDto {
 
     public Long distance;
 
-    public HotelSearchDto(HotelSearchInterface hotelInfoInterface) {
+    public HotelSearch(HotelSearchInterface hotelInfoInterface) {
         this.addr1 = hotelInfoInterface.getAddr1();
         this.addr2 = hotelInfoInterface.getAddr2();
         this.imageUrl1 = hotelInfoInterface.getImage_url1();

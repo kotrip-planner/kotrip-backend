@@ -1,6 +1,6 @@
 package com.example.kotrip.repository.hotel;
 
-import com.example.kotrip.dto.hotel.HotelSearchDto;
+import com.example.kotrip.dto.hotel.HotelSearch;
 import com.example.kotrip.service.hotel.HotelSearchService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @SpringBootTest
@@ -29,11 +28,11 @@ class HotelSearchRepositoryTest {
         Double mapBY = 35.1544884700;
 
         /** when */
-        List<HotelSearchDto> hotelInfoDtos = hotelService.dtoTrans(mapAX, mapAY, mapBX, mapBY);
+        List<HotelSearch> hotelInfoDtos = hotelService.dtoTrans(mapAX, mapAY, mapBX, mapBY);
         System.out.println("hotelInfoDtos.size() = " + hotelInfoDtos.size());
 
         /** then */
-        for (HotelSearchDto hotel : hotelInfoDtos) {
+        for (HotelSearch hotel : hotelInfoDtos) {
             Assertions.assertThat(hotel.distance).isLessThan(10000); // 10km
             System.out.println("hotel.getTitle() = " + hotel.getTitle());
         }
