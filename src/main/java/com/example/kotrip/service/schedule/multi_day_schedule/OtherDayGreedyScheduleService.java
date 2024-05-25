@@ -38,7 +38,7 @@ public class OtherDayGreedyScheduleService {
     private static final String SET_SCHEDULE_RESULT = "일정 저장이 완료";
 
     private final OneDayTspScheduleService oneDayTspScheduleService;
-
+    private final OneTwoShortpathService oneTwoShortpathService;
     private final UserRepository userRepository;
     private final ScheduleRepository scheduleRepository;
     private final ScheduleJdbcRepository scheduleJdbcRepository;
@@ -67,33 +67,48 @@ public class OtherDayGreedyScheduleService {
          */
         // n박 m일 이므로 Schedule이 여러 개 있다.
         ArrayList<Schedule> schedules = new ArrayList<>();
-        ArrayList<ScheduleTour> scheduleTours = new ArrayList<>(); // 모든 일차 최적의 관광지 데이터 경로 저장 리스트
 
+        // 모든 일차 최적의 관광지 데이터 경로 저장 리스트
+        ArrayList<ScheduleTour> scheduleTours = new ArrayList<>();
+
+        // 유저 정보 파악
         Authentication authentication = getAuthentication();
         User user = userRepository.findUserByNickname(authentication.getName()).orElseThrow(() -> new UsernameNotFoundException("유저를 찾을 수 없습니다."));
 
         String scheduleUuid = ClassificationId.getID(); // 스케줄 uuid
         LocalDate localDate = naverRequestDto.getKotrip().get(0).getDate(); // 여행 시작 일자
 
+        // 1, 2일차 관광지 노드 리스트
+        List<Node> oneNodes = naverRequestDto.getKotrip().get(0).getNodes();
+        List<Node> twoNodes = naverRequestDto.getKotrip().get(1).getNodes();
+
+        // 1일차 2일차 사이의 가장 짧은 길과 관련된 노드를 찾는다.
+        String shortpath = oneTwoShortpathService.getShortpath(oneNodes, twoNodes);
+        Long fromNodeId = searchFromNodeId(shortpath);
+
+
         // 1일차 관광지 TSP 순회하여, 나온 최적의 관광지 리스트 id
         ArrayList<Long> oneDayNodePathId = oneDayTspScheduleService.getDriving(naverRequestDto);
+        ArrayList<Long> newOneDayNodePathId = shuffleRoute(oneDayNodePathId, fromNodeId);
 
-
-        List<Node> nodes = naverRequestDto.getKotrip().get(0).getNodes(); // 1일차 관광지들
-
-        Long endNodeId = oneDayNodePathId.get(oneDayNodePathId.size() - 1);
-        Node endNode = nodes.stream()
+        // 1일차 마지막 노드 데이터를 가져온다.
+        Long endNodeId = newOneDayNodePathId.get(newOneDayNodePathId.size() - 1);
+        Node endNode = oneNodes.stream()
                 .filter(node -> node.getId().equals(endNodeId))
                 .findFirst()
                 .get();
 
-        ArrayList<ScheduleTour> oneDayScheduleTour = oneDaySave(nodes, oneDayNodePathId);
+        // 1일차 관광지 정보들 schedules, scheduleTours 리스트에 저장
+        ArrayList<ScheduleTour> oneDayScheduleTour = oneDaySave(oneNodes, newOneDayNodePathId);
+
+        // 1일차 관광지 정보들 user, schedule 연관 관계 설정
         linkScheduleToEvent(oneDayScheduleTour, user, naverRequestDto, schedules, scheduleTours, scheduleUuid, localDate);
 
-        int tripTotalDay = naverRequestDto.getKotrip().size(); // 여행이 "몇 일차"인지?
+        // 여행이 "몇 일차"인지?
+        int tripTotalDay = naverRequestDto.getKotrip().size();
         for (int i = 1; i < tripTotalDay; ++i) {
-            ArrayList<ScheduleTour> nTour = new ArrayList<>(); // n박 m일, 각 n일차 최적의 관광지 데이터 경로 저장 리스트
-            List<Node> nTrip = naverRequestDto.getKotrip().get(i).getNodes(); // n일차 관광지 노드들
+            ArrayList<ScheduleTour> nTour = new ArrayList<>(); // 각 n일차 최적의 관광지 데이터 경로 저장 리스트
+            List<Node> nTrip = naverRequestDto.getKotrip().get(i).getNodes(); // n일차 관광지 노드 리스트
             Map<Long, Boolean> visited = new HashMap<>();
 
             // n일차 관광지 리스트 미방문 초기화
@@ -115,9 +130,11 @@ public class OtherDayGreedyScheduleService {
                 }
 
 
-                if (j == nTrip.size()) { // nTrip.size() 만큼만 관광지를 저장해야 한다.
+                // nTrip.size() 만큼만 관광지를 저장해야 한다.
+                if (j == nTrip.size()) {
                     break;
                 }
+
                 /**
                  * 현재 노드에서 가까운 노드 찾기
                  */
@@ -131,11 +148,8 @@ public class OtherDayGreedyScheduleService {
                 localDate = localDate.plusDays(1);
             }
 
-
             linkScheduleToEvent(nTour, user, naverRequestDto, schedules, scheduleTours, scheduleUuid, localDate);
-
         }
-
 
         scheduleJdbcRepository.saveAll(schedules);
         scheduleTourJdbcRepository.saveAll(scheduleTours);
@@ -143,10 +157,49 @@ public class OtherDayGreedyScheduleService {
         return new ScheduleResponseDto(scheduleUuid);
     }
 
-    private ArrayList<ScheduleTour> oneDaySave(List<Node> nodes, ArrayList<Long> oneDayNodePathId) {
-        List<Node> oneDayNodes = nodes.stream()
-                .filter(node -> oneDayNodePathId.contains(node.getId()))
-                .collect(Collectors.toList());
+    // fromNodeId가 출발지인 첫 번째 Tsp 관광지 id 리스트를 만든다.
+    private ArrayList<Long> shuffleRoute(ArrayList<Long> oneDayNodePathId, Long fromNodeId) {
+
+        ArrayList<Long> newOneDayNodePathId = new ArrayList<>();
+
+        int idx = oneDayNodePathId.indexOf(fromNodeId);
+        for (int i = 1; i < oneDayNodePathId.size() + 1; ++i) {
+            int tmp = idx;
+            tmp += i;
+            if (tmp >= oneDayNodePathId.size()) {
+                tmp %= oneDayNodePathId.size();
+            }
+            newOneDayNodePathId.add(oneDayNodePathId.get(tmp));
+        }
+
+        return newOneDayNodePathId;
+    }
+
+    // 출발지 노드의 id를 반환한다.
+    private Long searchFromNodeId(String shortpath) {
+        String[] parts = shortpath.split("-");
+        String fromNodeId = parts[0];
+        String toNodeId = parts[1]; // 추후 사용
+
+        return Long.valueOf(fromNodeId);
+    }
+
+    // n일차 관광지 정보들 schedules, scheduleTours 리스트에 저장 및 연관관계 설정
+    private ArrayList<ScheduleTour> oneDaySave(List<Node> nodes, ArrayList<Long> newOneDayNodePathId) {
+        // newOneDayNodePathId 순서에 맞게끔 새로운 oneDayNodes 생성
+        List<Node> oneDayNodes = new ArrayList<>();
+        for (Long id : newOneDayNodePathId) {
+            for (Node node : nodes) {
+                if (node.getId().equals(id)) {
+                    oneDayNodes.add(node);
+                    log.info("kkkk:" + node.getId());
+                    break;
+                }
+            }
+        }
+
+
+
 
         ArrayList<ScheduleTour> nTour = new ArrayList<>();
         for (int i = 0; i < oneDayNodes.size(); ++i) {
@@ -157,9 +210,9 @@ public class OtherDayGreedyScheduleService {
         return nTour;
     }
 
+    // 1일차 관광지 정보들 user, schedule 연관 관계 설정
     public void linkScheduleToEvent(ArrayList<ScheduleTour> nTour, User user, NaverRequestDto naverRequestDto, ArrayList<Schedule> schedules, ArrayList<ScheduleTour> scheduleTours, String scheduleUuid, LocalDate localDate) {
 
-        // 랜덤값
         String uuid2 = ClassificationId.getID();
         Schedule schedule = Schedule.toEntity(naverRequestDto.getTitle(), scheduleUuid, naverRequestDto.getAreaId(),
                 localDate, user, nTour, uuid2);
@@ -175,7 +228,8 @@ public class OtherDayGreedyScheduleService {
     }
 
 
-    public SchedulesResponseDto getSchedule() { // 스케줄 가져오는 함수
+    // 유저의 스케줄 정보를 가져온다.
+    public SchedulesResponseDto getSchedule() {
         Authentication authentication = getAuthentication();
 
         log.info("스케줄 가져오는 함수 실행");
