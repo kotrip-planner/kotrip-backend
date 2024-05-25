@@ -5,9 +5,11 @@ import lombok.Getter;
 
 @Getter
 public class TourPageResponseDto {
+    private int page;
     private List<TourInfoDto> list;
 
-    public TourPageResponseDto(List<TourInfoDto> list){
+    public TourPageResponseDto(int page, List<TourInfoDto> list){
+        this.page = page;
         this.list = list;
     }
 }
