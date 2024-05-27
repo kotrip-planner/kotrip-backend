@@ -86,9 +86,10 @@ public class OtherDayGreedyScheduleService {
         String shortpath = oneTwoShortpathService.getShortpath(oneNodes, twoNodes);
         Long fromNodeId = searchFromNodeId(shortpath);
 
-
         // 1일차 관광지 TSP 순회하여, 나온 최적의 관광지 리스트 id
         ArrayList<Long> oneDayNodePathId = oneDayTspScheduleService.getDriving(naverRequestDto);
+
+        // 1-2일차 최단 경로를 중심으로 1일차 TSP 경로 변형
         ArrayList<Long> newOneDayNodePathId = shuffleRoute(oneDayNodePathId, fromNodeId);
 
         // 1일차 마지막 노드 데이터를 가져온다.
