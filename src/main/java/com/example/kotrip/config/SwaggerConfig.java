@@ -5,42 +5,39 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.security.SecurityScheme.Type;
-import io.swagger.v3.oas.models.servers.Server;
-import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
+
     @Bean
-    public OpenAPI openAPI(){
+    public OpenAPI openAPI() {
+        String jwt = "JWT";
 
-        String jwtSchemeName = "jwt";
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+        // API 보안 요구사항 정의
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
+        Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
+                .name(jwt)
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT"));
 
-        //Server server = new Server();
-        //server.setUrl("http://localhost:8080/swagger");
-
-//        Components components = new Components()
-//                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
-//                        .name(jwtSchemeName)
-//                        .type(Type.HTTP)
-//                        .scheme("bearer")
-//                        .bearerFormat("JWT")
-//                );
-
+        // 보안 요구사항 + API 기본 정보 return
         return new OpenAPI()
-                .info(apiInfo());
-//                .addSecurityItem(securityRequirement)
-//                .components(components);
-                //.servers(List.of(server));
+                .info(apiInfo())
+                .components(components)
+                .addSecurityItem(securityRequirement);
     }
 
-    private Info apiInfo(){
+
+    private Info apiInfo() {
+
+        // API 기본 정보 객체 return
         return new Info()
-                .title("Kotrip")
-                .description("Kotrip-api")
+                .title("Kotrip 서버 API 명세서")
+                .description("api를 문서화하고, 팀원들 간의 협업 및 테스트를 용이하도록 한다.")
                 .version("1.0.0");
     }
+
 }
