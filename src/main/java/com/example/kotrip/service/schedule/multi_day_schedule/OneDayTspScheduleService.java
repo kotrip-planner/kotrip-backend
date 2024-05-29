@@ -6,6 +6,7 @@ import com.example.kotrip.dto.daytrip.response.NaverResponseDto;
 import com.example.kotrip.dto.daytrip.Node;
 import com.example.kotrip.service.road.TspService;
 import io.netty.channel.ChannelOption;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -24,8 +25,12 @@ public class OneDayTspScheduleService {
 
     // 네이버 지도 API, 발급받은 id와 password
     private static final String uriPath = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving";
-    private static final String CLIENT_ID = "5x4xophd9r";
-    private static final String CLIENT_SECRET = "iYRQwGRIZEmc8uAkxwkCTdrbUsOAZpTo5nNVik3g";
+
+    @Value("${API-KEY.clientId}")
+    private String CLIENT_ID;
+
+    @Value("${API-KEY.clientSecret}")
+    private String CLIENT_SECRET;
 
     // visited[True]인 곳은 api 거리 탐색 X
     public ArrayList<Long> getDriving(NaverRequestDto naverRequestDto) {

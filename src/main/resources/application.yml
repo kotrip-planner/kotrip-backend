@@ -16,3 +16,9 @@ spring:
 logging:
   level:
     org.springframework.jdbc: DEBUG
+
+
+
+API-KEY:
+  clientId: ncxf9y01px
+  clientSecret : LvhEc7kuJJ36IVotDQXQ8v1tjKGr8pbBZ9vVYYyM
