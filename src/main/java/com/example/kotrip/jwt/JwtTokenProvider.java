@@ -15,6 +15,7 @@ import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +24,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
 
-    private static final String secretKey = "8af7RixU2UNn1BUVIg2AvJEQaf0D29XYA23Cmdkf9bcelSdIE";
+    @Value("${API-KEY.secretKey}")
+    private static String secretKey;
     private static final String NICKNAME = "nickname";
     private static final String KAKAOID = "kakaoId";
     private static final String AUTHORIZATION = "Authorization";
