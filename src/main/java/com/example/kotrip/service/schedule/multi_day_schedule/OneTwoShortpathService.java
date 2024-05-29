@@ -7,6 +7,7 @@ import com.example.kotrip.dto.daytrip.response.NaverResponseDto;
 import io.netty.channel.ChannelOption;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -26,8 +27,11 @@ public class OneTwoShortpathService {
 
     // 네이버 지도 API, 발급받은 id와 password
     private static final String uriPath = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving";
-    private static final String CLIENT_ID = "5x4xophd9r";
-    private static final String CLIENT_SECRET = "iYRQwGRIZEmc8uAkxwkCTdrbUsOAZpTo5nNVik3g";
+    @Value("${API-KEY.clientId}")
+    private String CLIENT_ID;
+
+    @Value("${API-KEY.clientSecret}")
+    private String CLIENT_SECRET;
 
 
     public String getShortpath(List<Node> oneNodes, List<Node> twoNodes) {

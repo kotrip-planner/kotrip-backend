@@ -4,6 +4,7 @@ import com.example.kotrip.dto.daytrip.response.NaverResponseDto;
 import com.example.kotrip.dto.daytrip.Node;
 import io.netty.channel.ChannelOption;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -21,8 +22,12 @@ import java.util.Map;
 public class NearNodeService {
 
     private static final String uriPath = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving";
-    private static final String CLIENT_ID = "ncxf9y01px";
-    private static final String CLIENT_SECRET = "aWz84CcrXTVDMSZULVD9HH4Z3J2sWdge5zBYaMQw";
+
+    @Value("${API-KEY.clientId}")
+    private String CLIENT_ID;
+
+    @Value("${API-KEY.clientSecret}")
+    private String CLIENT_SECRET;
 
     // visited[True]인 곳은 api 거리 탐색 X
     public Node getNearNode(Node start, List<Node> allNodes, Map<Long, Boolean> visited) {
