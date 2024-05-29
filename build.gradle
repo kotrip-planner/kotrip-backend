@@ -68,3 +68,11 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         freeCompilerArgs = ['-Xjsr305=strict'] // JSR-305 어노테이션에 대한 컴파일러의 태도를 설정합니다. (선택적)
     }
 }
+
+processResources.dependsOn('kotrip-secret')
+
+tasks.register('copySecret', Copy) {
+    from './secret' // 서브모듈 디렉토리 경로
+    include "application.yml" // 복사할 파일
+    into 'src/main/resources' // 복사 위치
+}
