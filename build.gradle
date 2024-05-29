@@ -69,10 +69,16 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     }
 }
 
-processResources.dependsOn('kotrip-secret')
+processResources.dependsOn('secret')
 
-tasks.register('copySecret', Copy) {
-    from './secret' // 서브모듈 디렉토리 경로
-    include "application.yml" // 복사할 파일
-    into 'src/main/resources' // 복사 위치
+tasks.register('secret', Copy) {
+    from './secret/src/main/resources' // 서브모듈 디렉토리 경로
+    include "*.yml" // 복사할 파일
+    into './src/main/resources' // 복사 위치
 }
+
+//task copyGitSubmodule(type: Copy) {
+//    from './kotrip-secret' // 서브모듈 디렉토리 경로
+//    include "*.yml" // 복사할 파일
+//    into 'src/main/resources' // 복사 위치
+//}
