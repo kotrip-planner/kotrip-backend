@@ -1,4 +1,4 @@
-# Test(5) : 폴더 생성 위치 확인
+# Test(5) : kotrip-backend 미리 생성하고, pull 받기
 
 name: kotrip github-action
 
