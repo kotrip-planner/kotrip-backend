@@ -1,4 +1,4 @@
-# Test(5) : kotrip-backend 미리 생성하고, pull 받기
+# Test(7) : ec2 내에서 계정과 비밀번호 저장(git config --global credential.helper store)
 
 name: kotrip github-action
 
