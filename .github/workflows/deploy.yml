@@ -1,0 +1,86 @@
+name: 프로젝트 CI/CD 적용
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # https://github.com/actions/checkout
+      - name: Github Repository 파일 불러오기
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.USER_TOKEN }}
+          submodules: true
+
+
+      # https://github.com/actions/setup-java
+      - name: jdk 17 version 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+
+      - name: gradlew 파일에 실행 권한 부여
+        run: chmod +x gradlew
+
+
+      # https://github.com/actions/cache
+      - name: gradle packages 캐시하기
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+
+      # https://github.com/gradle/gradle-build-action
+      # https://github.com/gradle/actions/tree/main
+      - name: Build with Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          arguments: build
+
+
+      - name: Test with Gradle
+        run: ./gradlew test
+
+
+      - name: Prepare deployment package
+        run: |
+          mkdir deploy
+          cp build/libs/*SNAPSHOT.jar deploy/kotrip.jar
+          
+
+      # github-actions 실행되는 컴퓨터의 known_hosts 파일에 EC2 Host를 추가하여 SSH 연결 문제 방지
+      - name: Add EC2 host to known_hosts
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+
+
+      # SCP를 사용하여 `.jar` 파일을 EC2 인스턴스에 전송
+      - name: 1. scp, ssh로 EC2 배포하기
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USERNAME }}
+          EC2_KEY: ${{ secrets.EC2_KEY }}
+        run: |
+          echo "$EC2_KEY" > kotrip-key-pair.pem
+          chmod 400 kotrip-key-pair.pem
+
+          scp -i kotrip-key-pair.pem -o StrictHostKeyChecking=yes deploy/kotrip.jar $EC2_USER@$EC2_HOST:/home/ubuntu/kotrip.jar
+          ssh -i kotrip-key-pair.pem -o StrictHostKeyChecking=yes $EC2_USER@$EC2_HOST "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/kotrip.jar > app.log 2>&1 &"
+
+          rm -f kotrip-key-pair.pem
