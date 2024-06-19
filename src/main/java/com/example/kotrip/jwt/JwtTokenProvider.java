@@ -14,7 +14,6 @@ import java.util.Date;
 import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
@@ -25,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     @Value("${API-KEY.secretKey}")
-    private static String secretKey;
+    private String secretKey;
     private static final String NICKNAME = "nickname";
     private static final String KAKAOID = "kakaoId";
     private static final String AUTHORIZATION = "Authorization";
@@ -54,8 +53,8 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    @NotNull
-    private static SecretKey getKey(Decoder<CharSequence, byte[]> base64) {
+    private SecretKey getKey(Decoder<CharSequence, byte[]> base64) {
+        log.info("secretKey : {}", secretKey);
         return Keys.hmacShaKeyFor(base64.decode(secretKey));
     }
 
@@ -77,6 +76,7 @@ public class JwtTokenProvider {
     }
 
     public String getUsername(String token) {
+        log.info("secretKey : {}", secretKey);
         key = getKey(Decoders.BASE64);
         System.out.println(token);
         return Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload().get(NICKNAME,String.class);
