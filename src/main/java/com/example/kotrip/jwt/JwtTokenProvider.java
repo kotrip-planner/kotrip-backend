@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     @Value("${API-KEY.secretKey}")
-    private String secretKey;
+    private String secretKey; // static 취소
     private static final String NICKNAME = "nickname";
     private static final String KAKAOID = "kakaoId";
     private static final String AUTHORIZATION = "Authorization";
