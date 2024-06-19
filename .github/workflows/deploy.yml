@@ -84,3 +84,4 @@ jobs:
           ssh -i kotrip-key-pair.pem -o StrictHostKeyChecking=yes $EC2_USER@$EC2_HOST "pgrep java | xargs kill -9; nohup java -jar /home/${{ secrets.EC2_USERNAME }}/kotrip.jar > app.log 2>&1 &"
 
           rm -f kotrip-key-pair.pem
+
